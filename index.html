@@ -244,13 +244,13 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 <div class="program-controls">
 <div class="ctrl"><label><span>Vazão inicial</span><b id="q0lbl">2,0 m³/s</b></label><select id="q0"><option value="2">2,0 m³/s</option><option value="3">3,0 m³/s</option><option value="4">4,0 m³/s</option></select></div>
 <div class="ctrl"><label><span>Q-meta requerida</span><b id="qMetaLbl">9,5 m³/s</b></label><input id="qMeta" type="number" min="0.1" step="0.1" value="9.5"></div>
-<div class="ctrl"><label><span>Retirada agregada</span><b id="wLbl">0,00 m³/s</b></label><input id="withdrawal" type="number" min="0" step="0.05" value="0"></div>
+<div class="ctrl" style="grid-column:1/-1"><details open><summary>Retiradas por Trecho de Canal — <b id="wLbl">0,00 m³/s</b></summary><div class="grid2"><label>C1 — Curral Velho–Boa Vista<input id="withdraw_c1" type="number" min="0" step="0.05" value="0" /></label><label>C2 — Boa Vista–Mão Ruiva<input id="withdraw_c2" type="number" min="0" step="0.05" value="0" /></label><label>C3 — Mão Ruiva–Melancias<input id="withdraw_c3" type="number" min="0" step="0.05" value="0" /></label><label>C4 — Melancias–Pirangi<input id="withdraw_c4" type="number" min="0" step="0.05" value="0" /></label><label>C5 — Pirangi–Serrote<input id="withdraw_c5" type="number" min="0" step="0.05" value="0" /></label><label>C6 — Serrote–Juazeirinho<input id="withdraw_c6" type="number" min="0" step="0.05" value="0" /></label><label>C7 — Jusante de Juazeirinho<input id="withdraw_c7" type="number" min="0" step="0.05" value="0" /></label></div><b>ΣQ retiradas: <span id="withdrawalsTotal">0,00 m³/s</span></b><div id="withdrawalWarnings" style="color:#a13a19" aria-live="polite"></div></details></div>
 <div class="ctrl"><label><span>Compensar retirada?</span><b id="compLbl">Sim</b></label><select id="compensate"><option value="1">Sim</option><option value="0">Não</option></select></div>
 <div class="ctrl"><label><span>ΔQ padrão</span><b id="dqLbl">1,0 m³/s</b></label><input id="defaultDQ" type="number" min="0.05" step="0.05" value="1"></div>
 <div class="ctrl"><label><span>Δt padrão</span><b id="dtLbl">30 min</b></label><input id="defaultDT" type="number" min="1" step="1" value="30"></div>
 <div class="ctrl"><label><span>Sifão de análise</span><b id="sifLbl">Boa Vista</b></label><select id="sifao"></select></div>
 </div>
-<div class="program-actions"><button class="btn active" id="generateProgram">Gerar sequência até Q necessária</button><button class="btn" id="addStage">+ Adicionar etapa</button><button class="btn danger" id="resetProgram">Restaurar exemplo</button><span class="muted">Após gerar, edite livremente Q e duração de qualquer etapa.</span></div>
+<div class="program-actions"><button class="btn active" id="generateProgram">Gerar sequência até Q necessária</button><button class="btn" id="addStage">+ Adicionar etapa</button><button class="btn danger" id="resetProgram">Restaurar exemplo</button><button class="btn" id="exportSpatialJSON" type="button">Exportar JSON C1–C7</button><span class="muted">Após gerar, edite livremente Q e duração de qualquer etapa.</span></div>
 <div class="sub"><h3 style="margin-top:0">Agenda operacional editável</h3><div class="table-scroll"><table class="program-table"><thead><tr><th>Etapa</th><th>Início</th><th>Q comandada (m³/s)</th><th>Duração até próxima manobra (min)</th><th>ΔQ (m³/s)</th><th>dQ/dt médio</th><th>Ação</th></tr></thead><tbody id="programTable"></tbody></table></div></div>
 <div class="results" id="simResultsTop"></div><div class="results" id="simResultsBottom"></div>
 <div class="grid2"><div class="sub"><h3>Implicações automáticas</h3><div id="implications"></div></div><div class="sub"><h3>Propagação da primeira perturbação</h3><table><thead><tr><th>Sifão</th><th>Onda dinâmica</th><th>Advecção inicial</th><th>Cinemática @ Q-meta</th></tr></thead><tbody id="arrivalTable"></tbody></table></div></div>
@@ -396,11 +396,12 @@ function initLeafletMap(){
 function interp(arr,t){if(t<=1)return arr[0];for(let i=0;i<knownTimes.length-1;i++){const a=knownTimes[i],b=knownTimes[i+1];if(t>=a&&t<=b){const r=(t-a)/(b-a);return arr[i]+r*(arr[i+1]-arr[i]);}}return arr[arr.length-1]*16/t;}
 function solveChannel(Q){const b=5,z=1.5,n=1/70,S=0.00015; function calc(y){const A=b*y+z*y*y,P=b+2*y*Math.sqrt(1+z*z),R=A/P,T=b+2*z*y; return {A,P,R,T,Q:(1/n)*A*Math.pow(R,2/3)*Math.sqrt(S)};} let lo=.001, hi=3.5; for(let i=0;i<70;i++){const m=(lo+hi)/2; if(calc(m).Q>Q) hi=m; else lo=m;} const y=(lo+hi)/2; const c=calc(y); return {...c,y,V:Q/c.A};}
 function statusClass(txt){return txt==='Favorável'?'ok':(txt==='Atenção' || txt==='Não atende Q-meta'?'warn':'bad');}
-function getState(){
-  const q0=parseFloat($('q0').value), qMeta=Math.max(.1,parseFloat($('qMeta').value)||9.5);
-  const withdrawal=Math.max(0,parseFloat($('withdrawal').value)||0), compensate=$('compensate').value==='1';
-  return {q0,qMeta,withdrawal,compensate,sifao:$('sifao').value,requiredQ:qMeta+(compensate?withdrawal:0)};
-}
+const CANAL_KEYS=['c1','c2','c3','c4','c5','c6','c7'];
+function readWithdrawals(){return Object.fromEntries(CANAL_KEYS.map(k=>[k,Math.max(0,Number($('withdraw_'+k)?.value)||0)]));}
+function getState(){const q0=Number($('q0').value)||2,qMeta=Math.max(.1,Number($('qMeta').value)||9.5),withdrawals=readWithdrawals(),withdrawal=CANAL_KEYS.reduce((a,k)=>a+withdrawals[k],0),compensate=$('compensate').value==='1';return {q0,qMeta,withdrawals,withdrawal,compensate,sifao:$('sifao').value,requiredQ:qMeta+(compensate?withdrawal:0)};}
+function upstreamWithdrawal(s,st=getState()){const i=siphons.findIndex(x=>x.id===s.id);return CANAL_KEYS.slice(0,Math.max(0,i+1)).reduce((a,k)=>a+st.withdrawals[k],0);}
+function flowBalance(origin,s,st=getState()){const withdrawal=upstreamWithdrawal(s,st),raw=origin-withdrawal;return {q:Math.max(0,raw),withdrawal,deficit:Math.max(0,-raw)};}
+
 function arrivalFor(q0){
   const q=Number(q0)||2, out={};
   siphons.forEach(s=>{
@@ -432,18 +433,16 @@ function programFlowAtMinute(min){
 }
 function localFlowAtTime(hours,siphon,st=getState()){
   const arr=arrivalFor(st.q0)[siphon.name].wave_h*60;
-  return programFlowAtMinute(hours*60-arr);
+  return flowBalance(programFlowAtMinute(hours*60-arr),siphon,st).q;
 }
 function eventTransient(event,siphon){
-  if(event.index===0) return {deltaH:0,pmin:siphon.dynamic,risk:'Base',cls:'event-neutral'};
-  const prev=programStages[event.index-1].q, dq=event.q-prev, dv=Math.abs(dq)/pipeArea;
-  const maneuver=Math.max(1,event.duration||1), base=interp(siphon.hammer,maneuver), refV=9.5/pipeArea;
-  const deltaH=base*(dv/refV), qavg=Math.max(.1,(prev+event.q)/2), dyn=siphon.dynamic*Math.pow(qavg/9.5,2), pmin=dyn-deltaH;
-  let risk='Favorável',cls='event-ok';
-  if(pmin<0 || deltaH>dyn*1.5){risk='Crítico';cls='event-bad';}
-  else if(pmin<1 || Math.abs(dq)>=1.5 || maneuver<15){risk='Atenção';cls='event-warn';}
-  return {deltaH,pmin,risk,cls,dq,maneuver};
+ const st=getState(),up=upstreamWithdrawal(siphon,st),prev=Math.max(0,(event.index?programStages[event.index-1].q:event.q)-up),next=Math.max(0,event.q-up),dq=next-prev,qavg=(prev+next)/2,velocity=qavg/pipeArea,dyn=siphon.dynamic*Math.pow(qavg/9.5,2);
+ if(event.index===0)return {deltaH:0,pmin:dyn,risk:'Base',cls:'event-neutral',dq:0,qavg,velocity};
+ const maneuver=Math.max(1,event.duration||1),deltaH=interp(siphon.hammer,maneuver)*Math.abs(dq)/9.5,pmin=dyn-deltaH;
+ const risk=pmin<0||deltaH>dyn*1.5?'Crítico':pmin<1||Math.abs(dq)>=1.5||maneuver<15?'Atenção':'Favorável';
+ return {deltaH,pmin,risk,cls:risk==='Crítico'?'event-bad':risk==='Atenção'?'event-warn':'event-ok',dq,maneuver,qavg,velocity,upstream:up};
 }
+
 function currentScreening(){
   const tl=stageTimeline(), lastEvent=tl.length>1?tl[tl.length-1]:tl[0];
   return siphons.map(s=>({...s,...eventTransient(lastEvent,s)}));
@@ -468,11 +467,11 @@ function drawSchematic(filter='all'){const svg=$('schematicMap'); const W=1200,H
 function fillSifaoSelect(){ $('sifao').innerHTML = siphons.map(s=>`<option value="${s.id}">${s.name}</option>`).join(''); }
 function update(reRender=true){
   const st=getState(); normalizeStages(); if(reRender) renderProgramTable();
-  $('q0lbl').textContent=fmt(st.q0,1)+' m³/s'; $('qMetaLbl').textContent=fmt(st.qMeta,2)+' m³/s'; $('wLbl').textContent=fmt(st.withdrawal,2)+' m³/s'; $('compLbl').textContent=st.compensate?'Sim':'Não'; $('dqLbl').textContent=fmt(parseFloat($('defaultDQ').value)||0,2)+' m³/s'; $('dtLbl').textContent=fmt(parseFloat($('defaultDT').value)||0,0)+' min';
+  $('q0lbl').textContent=fmt(st.q0,1)+' m³/s'; $('qMetaLbl').textContent=fmt(st.qMeta,2)+' m³/s'; $('wLbl').textContent=fmt(st.withdrawal,2)+' m³/s';$('withdrawalsTotal').textContent=fmt(st.withdrawal,2)+' m³/s'; $('compLbl').textContent=st.compensate?'Sim':'Não'; $('dqLbl').textContent=fmt(parseFloat($('defaultDQ').value)||0,2)+' m³/s'; $('dtLbl').textContent=fmt(parseFloat($('defaultDT').value)||0,0)+' min';
   const sref=siphons.find(s=>s.id===st.sifao)||siphons[0], tl=stageTimeline(), finalQ=tl.length?tl[tl.length-1].q:st.q0, totalMin=totalProgramMinutes(); if($('sifLbl')) $('sifLbl').textContent=sref.name;
   const v0=st.q0/pipeArea, vf=finalQ/pipeArea, ch0=solveChannel(st.q0), chF=solveChannel(Math.max(.01,finalQ)), arr=arrivalFor(st.q0);
   const events=tl.slice(1).map(e=>({...e,...eventTransient(e,sref)})), worst=events.length?events.reduce((a,b)=>b.deltaH>a.deltaH?b:a):{deltaH:0,pmin:sref.dynamic,risk:'Base'};
-  const qEffective=finalQ-st.withdrawal, meets=qEffective>=st.qMeta-.01;
+  const qEffective=Math.max(0,finalQ-st.withdrawal), meets=qEffective>=st.qMeta-.01;const deficits=siphons.map(s=>({s,...flowBalance(finalQ,s,st)})).filter(x=>x.deficit>0);$('withdrawalWarnings').textContent=deficits.length?'Déficit: '+deficits.map(x=>x.s.name+' '+fmt(x.deficit,2)+' m³/s').join('; '):'';
   $('simResultsTop').innerHTML=`<article class="res"><span>Programa</span><strong>${tl.length} etapas</strong><small>${fmt(totalMin,0)} min = ${fmt(totalMin/60,2)} h</small></article><article class="res"><span>Q necessária em Curral</span><strong>${fmt(st.requiredQ,2)} m³/s</strong><small>meta ${fmt(st.qMeta,2)} + compensação</small></article><article class="res"><span>Q final programada</span><strong>${fmt(finalQ,2)} m³/s</strong><small>Q efetiva após retiradas ≈ ${fmt(qEffective,2)}</small></article><article class="res"><span>Atendimento da meta</span><strong>${meets?'Sim':'Não'}</strong><small><span class="status ${meets?'ok':'warn'}">${meets?'Atende':'Rever programação'}</span></small></article>`;
   $('simResultsBottom').innerHTML=`<article class="res"><span>Velocidade</span><strong>${fmt(v0)} → ${fmt(vf)} m/s</strong><small>inicial → final programada</small></article><article class="res"><span>Pior ΔH screening · ${sref.name}</span><strong>${fmt(worst.deltaH)} mca</strong><small>maior evento da agenda</small></article><article class="res"><span>1ª chegada de onda</span><strong>${fmt(arr[sref.name].wave_h)} h</strong><small>após cada comando, soma-se o instante do evento</small></article><article class="res"><span>Advecção inicial</span><strong>${fmt(arr[sref.name].mass_h)} h</strong><small>referência, não estabilização oficial</small></article>`;
   $('arrivalTable').innerHTML=siphons.map(x=>`<tr><td><b>${x.name}</b></td><td>${fmt(arr[x.name].wave_h,2)} h</td><td>${fmt(arr[x.name].mass_h,2)} h</td><td>${fmt(kinematicHours(x,st.qMeta),2)} h</td></tr>`).join('');
@@ -624,9 +623,11 @@ function updateCAV(){
   $('cavInterpretation').innerHTML=bullets.join('');
 }
 function flowStatus(Q,target,waveArrived){if(!waveArrived)return ['base','Regime base'];if(Q>=.98*target)return ['meta','Próximo da meta'];return ['trans','Em transição'];}
+function exportSpatialScenario(){const st=getState();return {version:'7.1',q0:st.q0,qMeta:st.qMeta,withdrawals:st.withdrawals,compensate:st.compensate,stages:stageTimeline()};}window.exportSpatialScenario=exportSpatialScenario;
+$('exportSpatialJSON').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(exportSpatialScenario(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='SimulaT4_V7-1_retiradas_C1-C7.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 function updateAllSiphonFlows(){
   if(!$('sixFlowTable'))return; const st=getState(),time=parseFloat($('flowTime')?.value||12),horizon=parseFloat($('flowHorizon')?.value||48),arrival=arrivalFor(st.q0),target=st.qMeta;
-  $('flowTimeLbl').textContent=fmt(time,1)+' h';
+  $('flowTimeLbl').textContent=fmt(time,1)+' h';const deficitsNow=siphons.map(s=>{const origin=programFlowAtMinute(time*60-arrival[s.name].wave_h*60);return {s,...flowBalance(origin,s,st)}}).filter(x=>x.deficit>1e-8);$('withdrawalWarnings').textContent=deficitsNow.length?'ALERTA (t='+fmt(time,2)+' h): '+deficitsNow.map(x=>x.s.name+' déficit '+fmt(x.deficit,2)+' m³/s').join(' | '):'';
   $('sixFlowTable').innerHTML=siphons.map(s=>{const q=localFlowAtTime(time,s,st),v=q/pipeArea,ch=solveChannel(Math.max(.01,q)),kin=kinematicHours(s,st.qMeta),events=stageTimeline().slice(1),arrived=events.filter(e=>time*60>=e.startMin+arrival[s.name].wave_h*60),next=events.find(e=>time*60<e.startMin+arrival[s.name].wave_h*60),last=arrived.length?arrived[arrived.length-1]:null; let cls='base',label='Regime base';if(last){cls=q>=.98*target?'meta':'trans';label=q>=.98*target?'Q ≥ 98% meta':'Respondendo a E'+last.index;} const pct=Math.max(0,Math.min(100,q/Math.max(.01,target)*100));return `<tr><td><b>${s.name}</b><br><small>${last?'última: E'+last.index:'nenhum evento recebido'}${next?' · próxima E'+next.index+' em '+fmt((next.startMin+arrival[s.name].wave_h*60-time*60),0)+' min':''}</small></td><td>${fmt(s.dist,2)} km</td><td>${fmt(arrival[s.name].wave_h,2)} h</td><td>${fmt(kin,2)} h</td><td><b>${fmt(q,2)} m³/s</b></td><td>${fmt(v,2)} m/s</td><td>${fmt(ch.y,2)} m</td><td><div class="flow-meter"><span style="width:${pct}%"></span></div><small>${fmt(pct,0)}%</small></td><td><span class="tag ${cls}">${label}</span></td></tr>`;}).join(''); drawAllFlowsChart(st,horizon,time);
 }
 function drawAllFlowsChart(st,horizon,markerT){
@@ -804,8 +805,8 @@ function updatePrepModule(){
 if($('cavPreset')) $('cavPreset').addEventListener('change', applyCAVPreset);
 ['flowTime','flowHorizon','flowRef'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('input', updateAllSiphonFlows); });
 
-$('generateProgram').addEventListener('click',generateProgram); $('addStage').addEventListener('click',()=>{const tl=stageTimeline(),last=tl.length?tl[tl.length-1]:{q:getState().q0};programStages.push({q:last.q,duration:Math.max(1,parseFloat($('defaultDT').value)||30)});renderProgramTable();update(false);}); $('resetProgram').addEventListener('click',()=>{programStages=[];$('q0').value='2';$('qMeta').value='9.5';$('withdrawal').value='0';$('compensate').value='1';$('defaultDQ').value='1';$('defaultDT').value='30';generateProgram();});
-['q0','qMeta','withdrawal','compensate','defaultDQ','defaultDT','sifao'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='q0')programStages[0]&&(programStages[0].q=parseFloat($('q0').value));update();}));
+$('generateProgram').addEventListener('click',generateProgram); $('addStage').addEventListener('click',()=>{const tl=stageTimeline(),last=tl.length?tl[tl.length-1]:{q:getState().q0};programStages.push({q:last.q,duration:Math.max(1,parseFloat($('defaultDT').value)||30)});renderProgramTable();update(false);}); $('resetProgram').addEventListener('click',()=>{programStages=[];$('q0').value='2';$('qMeta').value='9.5';CANAL_KEYS.forEach(k=>$('withdraw_'+k).value='0');$('compensate').value='1';$('defaultDQ').value='1';$('defaultDT').value='30';generateProgram();});
+['q0','qMeta',...CANAL_KEYS.map(k=>'withdraw_'+k),'compensate','defaultDQ','defaultDT','sifao'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='q0')programStages[0]&&(programStages[0].q=parseFloat($('q0').value));update();}));
 $('playAnim').addEventListener('click', playAnim); $('pauseAnim').addEventListener('click', pauseAnim); $('resetAnim').addEventListener('click', resetAnim);
 fillSifaoSelect(); $('sifao').value='boa'; initLeafletMap(); drawAnimBase(); resetAnim(); generateProgram(); updatePrepModule();
 </script>
@@ -856,7 +857,7 @@ FORMATO DA RESPOSTA: texto em português claro. Use Markdown leve (títulos com 
 
 COMO AJUDAR: explique o funcionamento, interprete resultados, compare cenários, aponte riscos e limitações, e sugira ajustes. Para PROPOR alteração de parâmetros no painel, ao final da resposta inclua um bloco exatamente assim (o usuário confirma antes de aplicar):
 \`\`\`acao
-{"q0":3,"qMeta":9.5,"withdrawal":0,"compensate":"1","defaultDQ":1,"defaultDT":30,"sifao":"boa","cavZ0":84.6,"cavQin":2,"cavHours":24,"cavLimit":83.77,"prepHold":10,"flowTime":12,"gerar":true}
+{"q0":3,"qMeta":9.5,"withdrawals":{"c1":0,"c2":0,"c3":0,"c4":0,"c5":0,"c6":0,"c7":0},"compensate":"1","defaultDQ":1,"defaultDT":30,"sifao":"boa","cavZ0":84.6,"cavQin":2,"cavHours":24,"cavLimit":83.77,"prepHold":10,"flowTime":12,"gerar":true}
 \`\`\`
 Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, mao, mel, pir, ser, jua (confira os ids em Sifões). "gerar":true regenera a agenda por ΔQ/Δt.`;
  const f=(n,d=2)=>fmt(n,d);
@@ -864,7 +865,8 @@ Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, 
  function live(){
   const st=getState(),tl=stageTimeline(),arr=arrivalFor(st.q0),sim=simulateCAVBalance(),last=tl.length>1?tl[tl.length-1]:tl[0];
   const t=parseFloat($('flowTime')?.value||12);
-  let o=`ESTADO ATUAL DO PAINEL\nQ inicial ${f(st.q0,1)} m³/s; Q-meta ${f(st.qMeta,2)}; retirada agregada ${f(st.withdrawal,2)}; compensar: ${st.compensate?'sim':'não'}; Q necessária em Curral Velho ${f(st.requiredQ,2)} m³/s; ΔQ/Δt padrão ${$('defaultDQ').value} m³/s / ${$('defaultDT').value} min; sifão de análise: ${$('sifao').selectedOptions[0].text}.\n`;
+  let o=`ESTADO ATUAL DO PAINEL\nQ inicial ${f(st.q0,1)} m³/s; Q-meta ${f(st.qMeta,2)}; retiradas C1–C7 ${JSON.stringify(st.withdrawals)}; retirada total ${f(st.withdrawal,2)}; compensar: ${st.compensate?'sim':'não'}; Q necessária em Curral Velho ${f(st.requiredQ,2)} m³/s; ΔQ/Δt padrão ${$('defaultDQ').value} m³/s / ${$('defaultDT').value} min; sifão de análise: ${$('sifao').selectedOptions[0].text}.\n`;
+  o+='BALANÇO POR SIFÃO: '+siphons.map(s=>{const x=flowBalance(tl[tl.length-1].q,s,st);return s.name+' Q='+f(x.q)+'; retiradas montante='+f(x.withdrawal)+'; déficit='+f(x.deficit)}).join(' | ')+'; C7 somente a jusante.\n';
   o+=`AGENDA (${tl.length} etapas, duração total ${f(totalProgramMinutes(),0)} min = ${f(totalProgramMinutes()/60,1)} h): `+tl.map(e=>`#${e.index} início ${fmtClock(e.startMin)} Q=${f(e.q)} dur=${f(e.duration,0)}min ΔQ=${f(e.dq)}`).join(' | ')+'\n';
   o+='SIFÕES (dados): '+siphons.map(s=>`${s.name}: km ${s.dist}, L_HAMMER ${s.length} m, L_POM ${s.pom_length} m, carga dinâmica ref ${s.dynamic} m, ΔH_base(9,5 m³/s; manobra 1…10,15,16 min)=${s.hammer.join('/')}`).join(' || ')+'\n';
   o+='CHEGADA DA ONDA (h após o evento; cinemática @ Q-meta): '+siphons.map(s=>`${s.name} onda ${f(arr[s.name].wave_h,2)} / massa ${f(arr[s.name].mass_h,2)} / cinemática ${f(kinematicHours(s,st.qMeta),2)}`).join('; ')+'\n';
@@ -955,8 +957,8 @@ Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, 
    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:$('aiModel').value.trim()||'gpt-4o-mini',messages:[{role:'system',content:sys},...hist.map(h=>({role:h.r==='u'?'user':'assistant',content:h.t})),{role:'user',content:q}]})});
    const j=await r.json();return j.choices?.[0]?.message?.content||('Erro: '+(j.error?.message||'sem resposta'))}
   catch(e){return 'Falha na conexão com a API. Resposta local:\n'+local(q)}}
- const OK={q0:v=>[2,3,4].includes(+v),qMeta:v=>+v>0&&+v<30,withdrawal:v=>+v>=0&&+v<10,compensate:v=>['0','1'].includes(String(v)),defaultDQ:v=>+v>0&&+v<10,defaultDT:v=>+v>=1&&+v<600,sifao:v=>siphons.some(s=>s.id===v),cavZ0:v=>+v>=74.1&&+v<=89.1,cavQin:v=>+v>=0&&+v<=25,cavHours:v=>+v>=1&&+v<=240,cavLimit:v=>+v>=74.1&&+v<=89.1,prepHold:v=>+v>=1&&+v<=120,prepWithdrawal:v=>+v>=0&&+v<10,flowTime:v=>+v>=0&&+v<=500};
- function apply(a){const done=[];let g=false;Object.keys(a).forEach(k=>{if(k==='gerar'){g=!!a[k];return}if(!OK[k]||!OK[k](a[k])||!$(k))return;
+ const OK={q0:v=>[2,3,4].includes(+v),qMeta:v=>+v>0&&+v<30,withdrawal:v=>+v>=0&&+v<10,withdrawals:v=>v&&typeof v==='object'&&CANAL_KEYS.every(k=>v[k]===undefined||(+v[k]>=0&&+v[k]<30)),compensate:v=>['0','1'].includes(String(v)),defaultDQ:v=>+v>0&&+v<10,defaultDT:v=>+v>=1&&+v<600,sifao:v=>siphons.some(s=>s.id===v),cavZ0:v=>+v>=74.1&&+v<=89.1,cavQin:v=>+v>=0&&+v<=25,cavHours:v=>+v>=1&&+v<=240,cavLimit:v=>+v>=74.1&&+v<=89.1,prepHold:v=>+v>=1&&+v<=120,prepWithdrawal:v=>+v>=0&&+v<10,flowTime:v=>+v>=0&&+v<=500};
+ function apply(a){const done=[];let g=false;Object.keys(a).forEach(k=>{if(k==='gerar'){g=!!a[k];return}if(k==='withdrawals'||k==='withdrawal'){const vals=k==='withdrawals'?a[k]:{c1:a[k]};if(!OK.withdrawals(vals))return;CANAL_KEYS.forEach(z=>{if(vals[z]!==undefined){$('withdraw_'+z).value=String(vals[z]);done.push(z+'='+vals[z]);}});update();return}if(!OK[k]||!OK[k](a[k])||!$(k))return;
    if(k==='cavQin'&&$('cavPreset'))$('cavPreset').value='manual';
    $(k).value=String(a[k]);$(k).dispatchEvent(new Event('input',{bubbles:true}));done.push(k+'='+a[k])});
   if(g&&typeof generateProgram==='function'){generateProgram();done.push('agenda regenerada')}
