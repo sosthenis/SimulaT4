@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>COGERH | Painel Técnico — Sifões Lote 4 · V7.0 · Operação por etapas + propagação/transientes</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<style>
+:root{--blue:#005a8d;--deep:#0a2340;--cyan:#34c3ff;--gold:#f0c24b;--bg:#f2f7fb;--panel:#fff;--line:#d8e4ec;--text:#193347;--muted:#607685;--shadow:0 12px 28px rgba(20,64,89,.11)}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font:15px/1.55 Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+a{color:var(--blue)} button,input,select{font:inherit}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:4px solid var(--blue);display:flex;justify-content:space-between;align-items:center;padding:16px 24px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.brand{display:flex;align-items:center;gap:12px} .ce{width:48px;height:48px;border-radius:10px;background:linear-gradient(145deg,#238b61,#005a8d);display:grid;place-items:center;color:#fff;font-weight:900} .title1{font-size:11px;letter-spacing:.12em;color:#587286;font-weight:800} .brandname{font-size:22px;font-weight:900;color:var(--blue)} .brandname span{font-size:12px;font-weight:600;color:#607685;margin-left:8px} .pills{display:flex;gap:8px;flex-wrap:wrap} .pill{padding:7px 11px;border-radius:999px;background:#eef5f8;color:#4e6777;font-size:12px;font-weight:800} .pill.b{background:#e6f4fb;color:var(--blue)} .pill.g{background:#e9f6ef;color:#176847}
+.hero{background:linear-gradient(120deg,#0a2340,#005a8d 60%,#0073a7);color:#fff;padding:28px 28px 26px} .hero h1{margin:10px 0;font-size:38px;line-height:1.08} .hero p{max-width:980px;color:#d9edf8;font-size:17px} .hero-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start} .hero-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px} .hero-kpi .box{padding:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:12px} .hero-kpi span{display:block;font-size:11px;color:#b7def1;text-transform:uppercase;font-weight:800} .hero-kpi strong{font-size:24px}
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;max-width:1700px;margin:0 auto;padding:18px} .side{position:sticky;top:88px;align-self:start;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:15px} .side a{display:block;padding:10px 12px;border-radius:10px;text-decoration:none;color:#355263;font-weight:700} .side a:hover{background:#edf6fa;color:var(--blue)} .side .note{margin-top:12px;padding:12px;border-left:4px solid var(--cyan);background:#f3f9fc;font-size:12px;color:#5e7482}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:18px} .sec-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:12px} .sec-head h2{margin:0;font-size:24px} .badgeN{width:34px;height:34px;border-radius:10px;background:#e6f4fb;color:var(--blue);display:grid;place-items:center;font-weight:900} .sec-title{display:flex;align-items:center;gap:10px} .muted{color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} .kpi{background:linear-gradient(#fff,#f8fbfd);border:1px solid #d9e6ee;border-top:4px solid var(--blue);border-radius:13px;padding:14px} .kpi span{display:block;font-size:11px;color:#5f7584;text-transform:uppercase;font-weight:900;letter-spacing:.04em} .kpi strong{display:block;font-size:28px;color:var(--deep);margin:4px 0} .kpi small{color:#667b89}
+.map-tabs,.map-layerbar,.preset-bar,.anim-controls{display:flex;gap:8px;flex-wrap:wrap} .btn{border:1px solid #bfd2df;background:#fff;color:#315161;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer} .btn:hover,.btn.active{background:#e7f4fa;border-color:#8ec4dd;color:var(--blue)} .map-wrap{margin-top:10px} .map-pane{display:none} .map-pane.active{display:block} .sat-frame{position:relative;border:1px solid #bdd3e0;border-radius:14px;overflow:hidden;background:#0d1424} .sat-frame img{display:block;width:100%;height:auto} .sat-caption{position:absolute;left:12px;bottom:12px;background:rgba(10,35,64,.84);color:#fff;padding:8px 10px;border-radius:10px;font-size:12px;max-width:440px}
+.svg-holder{border:1px solid #bdd3e0;border-radius:14px;overflow:hidden;background:radial-gradient(circle at 20% 20%,#f8fcff,#eef6fa 60%,#e8f1f6)} #schematicMap{width:100%;height:auto;display:block}
+.grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:14px} .sub{border:1px solid var(--line);border-radius:13px;padding:14px;background:#fbfdfe} .sub h3{margin:0 0 10px;color:var(--deep)} table{width:100%;border-collapse:collapse;font-size:13px} th,td{padding:9px;border-bottom:1px solid #e3ebf0;text-align:left} th{background:#eef5f8;color:#46606f;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.ctrl-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px} .ctrl{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f8fbfc} .ctrl label{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12px;font-weight:900;color:#4f6978} .ctrl input,.ctrl select{width:100%}
+.results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px} .res{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:12px;padding:12px;background:#fff} .res span{display:block;color:#607685;font-size:11px;text-transform:uppercase;font-weight:900} .res strong{display:block;font-size:23px;color:var(--deep);margin:4px 0} .status{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900} .ok{background:#e8f6ef;color:#176847} .warn{background:#fff4dc;color:#8b6218} .bad{background:#fde7e7;color:#a43b3b}
+.info{border-radius:12px;padding:13px 14px;margin-top:12px;background:#ecf7fb;border-left:4px solid var(--cyan)} ul.tight{padding-left:18px;margin:8px 0} ul.tight li{margin:6px 0}
+.chart{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfdfe} .chart svg{width:100%;height:340px;display:block}
+.matrix table td,.matrix table th{text-align:center;white-space:nowrap} .okc{background:#e7f6ed} .warnc{background:#fff5dc} .badc{background:#fde7e7}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} .step{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdfe} .step .n{width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900} .step h4{margin:10px 0 6px} .step p{margin:0;color:var(--muted)}
+.doc-links a{display:inline-block;margin-right:8px;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid #bfd2df;background:#fff;text-decoration:none;font-weight:700}
+footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-size:12px;display:flex;justify-content:space-between}
+@media(max-width:1200px){.shell{grid-template-columns:1fr} .side{position:static} .ctrl-grid{grid-template-columns:repeat(2,1fr)} .hero-grid,.grid2{grid-template-columns:1fr} .kpis,.results,.hero-kpi,.timeline{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.top{padding:12px 14px} .brandname span,.pills{display:none} .hero{padding:20px 16px} .hero h1{font-size:29px} .shell{padding:10px} .kpis,.results,.hero-kpi,.timeline,.ctrl-grid{grid-template-columns:1fr} .panel{padding:14px}}
+
+#map{height:650px;border:1px solid #bdd3e0;border-radius:14px;overflow:hidden;background:#e8f1f6}.leaflet-container{font-family:Inter,Segoe UI,Arial,sans-serif}.kmz-marker{background:transparent;border:0}.kmz-dot{width:17px;height:17px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.4)}.kmz-dot.origin{background:#f0b22f}.kmz-dot.intermediate{background:#8b6bb0}.kmz-dot.sifao{background:#d9634c}.kmz-dot.mouth{width:10px;height:10px;border:2px solid #fff;background:#25b9c6}.leaflet-tooltip.kmz-label{background:#0a2340;color:#fff;border:1px solid rgba(255,255,255,.5);box-shadow:0 2px 5px rgba(0,0,0,.22);font-weight:800;padding:4px 7px}.leaflet-tooltip.kmz-label:before{display:none}.map-note{margin-top:8px;color:#607685;font-size:12px}.map-fallback{display:none;border:1px solid #bdd3e0;border-radius:14px;padding:18px;background:#f7fbfd}.map-fallback.show{display:block}
+
+/* Módulo adicional V5.2 — estratégia de preparação jusante→montante */
+.strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.strategy-card{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fbfdfe}.strategy-card.primary{border-top:4px solid #238b61}.strategy-card.reference{border-top:4px solid var(--blue)}.strategy-card h3{margin:0 0 8px;color:var(--deep)}
+.seq-flow{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:8px;margin:12px 0}.seq-node{position:relative;border:1px solid #cbdbe4;border-radius:12px;padding:12px 8px;text-align:center;background:#fff;font-weight:800;color:#304f60}.seq-node:after{content:'←';position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:#607685;font-size:18px;font-weight:900}.seq-node:last-child:after{display:none}.seq-node b{display:block;color:var(--blue);font-size:12px;margin-bottom:2px}.seq-node.hot{background:#fff7e7;border-color:#e8c66c}.seq-node.critical{background:#fdecec;border-color:#e0a0a0}
+.op-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}.op-control{border:1px solid var(--line);border-radius:11px;padding:10px;background:#fff}.op-control label{display:block;font-size:11px;text-transform:uppercase;font-weight:900;color:#607685;margin-bottom:6px}.op-control select,.op-control input{width:100%}.ramp-table td,.ramp-table th{text-align:center}.ramp-table td:first-child,.ramp-table th:first-child{text-align:left}.critique{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.critique .good{background:#eaf7ef;border-left:4px solid #238b61;padding:12px;border-radius:10px}.critique .care{background:#fff7e8;border-left:4px solid #e0a22f;padding:12px;border-radius:10px}.tiny-note{font-size:12px;color:#607685;margin-top:8px}.op-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}.op-summary article{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff}.op-summary span{display:block;font-size:10px;text-transform:uppercase;font-weight:900;color:#607685}.op-summary strong{display:block;font-size:20px;color:var(--deep);margin-top:3px}
+@media(max-width:1200px){.strategy-grid,.critique{grid-template-columns:1fr}.seq-flow{grid-template-columns:repeat(3,1fr)}.op-controls,.op-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.seq-flow,.op-controls,.op-summary{grid-template-columns:1fr}.seq-node:after{content:'↓';right:50%;top:auto;bottom:-18px;transform:translateX(50%)}}
+
+
+/* V7.0 — programação operacional por etapas + CAV + propagação + screening de transientes */
+.pom-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:14px}
+.source-strip{font-size:12px;color:#607685;padding:9px 11px;border:1px dashed #bfd2df;border-radius:10px;background:#f8fbfd;margin-top:10px}
+.cav-controls{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+.cav-control{border:1px solid var(--line);border-radius:12px;padding:11px;background:#f8fbfc}
+.cav-control label{display:block;font-size:11px;text-transform:uppercase;font-weight:900;color:#607685;margin-bottom:6px}
+.cav-control input,.cav-control select{width:100%}
+.cav-results{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+.cav-results article{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:12px;padding:11px;background:#fff}
+.cav-results span{display:block;font-size:10px;text-transform:uppercase;font-weight:900;color:#607685}
+.cav-results strong{display:block;font-size:20px;color:var(--deep);margin:3px 0}
+.cav-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cav-chart-grid .chart svg{height:320px}
+.flow-controls{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:10px;margin:10px 0}
+.flow-control{border:1px solid var(--line);border-radius:12px;padding:11px;background:#f8fbfc}
+.flow-control label{display:flex;justify-content:space-between;gap:8px;font-size:11px;text-transform:uppercase;font-weight:900;color:#607685;margin-bottom:6px}
+.flow-control input,.flow-control select{width:100%}
+.flow-meter{height:9px;background:#e8f0f5;border-radius:999px;overflow:hidden;min-width:120px}
+.flow-meter span{display:block;height:100%;background:linear-gradient(90deg,#34c3ff,#005a8d);border-radius:999px}
+.table-scroll{overflow-x:auto}
+.tag{display:inline-block;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:900}
+.tag.base{background:#eef3f6;color:#607685}.tag.trans{background:#fff4dc;color:#8b6218}.tag.meta{background:#e8f6ef;color:#176847}
+.warning-box{background:#fff8e9;border-left:4px solid #e0a22f;padding:11px 13px;border-radius:10px;margin-top:10px}
+@media(max-width:1200px){.pom-grid,.cav-chart-grid{grid-template-columns:1fr}.cav-controls,.cav-results{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.cav-controls,.cav-results,.flow-controls{grid-template-columns:1fr}}
+
+/* V7.0 — editor de programa por etapas */
+.program-controls{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:12px 0}
+.program-table input{width:92px;padding:6px 7px;border:1px solid #bfd2df;border-radius:8px;background:#fff}.program-table td,.program-table th{text-align:center}.program-table td:nth-child(2),.program-table th:nth-child(2){text-align:left}
+.program-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.btn.danger{border-color:#e3b2b2;color:#a43b3b}.btn.danger:hover{background:#fdecec}
+.event-ok{background:#e7f6ed}.event-warn{background:#fff5dc}.event-bad{background:#fde7e7}.event-neutral{background:#f4f7f9}
+.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.spec-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfdfe}.spec-card b{display:block;color:var(--deep);margin-bottom:4px}.spec-card small{color:var(--muted)}
+@media(max-width:1200px){.program-controls,.spec-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.program-controls,.spec-grid{grid-template-columns:1fr}.program-table input{width:80px}}
+
+
+#aiFab{position:fixed;right:22px;bottom:22px;z-index:1000;background:linear-gradient(135deg,#005a8d,#0a2340);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px rgba(10,35,64,.35)}
+#aiPanel{position:fixed;right:22px;bottom:80px;z-index:1000;width:430px;max-width:calc(100vw - 28px);height:600px;max-height:calc(100vh - 110px);display:none;flex-direction:column;background:#fff;border:1px solid #bfd2df;border-radius:16px;box-shadow:0 20px 50px rgba(10,35,64,.3);overflow:hidden}
+#aiPanel.open{display:flex}
+#aiHead{background:linear-gradient(120deg,#0a2340,#005a8d);color:#fff;padding:13px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+#aiHead small{display:block;font-weight:400;opacity:.8;font-size:12px}
+#aiHead button{background:none;border:0;color:#fff;font-size:20px;cursor:pointer}
+#aiCfg{padding:8px 12px;border-bottom:1px solid #d8e4ec;display:grid;grid-template-columns:105px 1fr;gap:6px;background:#f6fafc}
+#aiCfg input,#aiCfg select,#aiIn{border:1px solid #bfd2df;border-radius:8px;padding:7px 9px;font-size:13px;background:#fff;color:#193347}
+#aiMsgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.aiM{max-width:92%;padding:10px 13px;border-radius:13px;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.aiM.u{align-self:flex-end;background:#005a8d;color:#fff}.aiM.b{align-self:flex-start;background:#eaf3f9;color:#193347}
+.aiAct{align-self:flex-start;border:1px solid #238b61;background:#e7f6ed;border-radius:12px;padding:10px 12px;font-size:13px;max-width:92%}
+.aiAct button{margin-top:6px;border:0;background:#238b61;color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer}
+#aiChips{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 8px}
+#aiChips button{border:1px solid #bfd2df;background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;color:#315161}
+#aiForm{display:flex;gap:6px;padding:10px;border-top:1px solid #d8e4ec}
+#aiForm input{flex:1}#aiForm button{border:0;background:#005a8d;color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer}
+.aiM.b{white-space:normal}.aiM .aiH{font-weight:700;margin:6px 0 3px}.aiM .aiL{margin:2px 0}.aiM .aiSp{height:6px}.aiM hr{border:0;border-top:1px solid #bfd2df;margin:8px 0}
+.aiM table.aiT{border-collapse:collapse;margin:6px 0;font-size:13px;display:block;overflow-x:auto}.aiM .aiT th,.aiM .aiT td{border:1px solid #bfd2df;padding:4px 8px;text-align:left}.aiM .aiT th{background:#d8e8f2}.aiM code{background:#dbe8f1;padding:0 4px;border-radius:4px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><div class="ce">CE</div><div><div class="title1">GOVERNO DO ESTADO DO CEARÁ</div><div class="brandname">COGERH <span>Companhia de Gestão dos Recursos Hídicos</span></div></div></div>
+  <div class="pills"><span class="pill b">Painel técnico</span><span class="pill">Premissa revisada</span><span class="pill g">Sistema cheio · linha antiga fechada · linha nova em 2 ou 3 m³/s</span><span class="pill b">V7.0 · operação por etapas + propagação/transientes</span></div>
+</header>
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="title1" style="color:#a8d6eb">EIXÃO DAS ÁGUAS · LOTE 4 · TESTE DA NOVA LINHA DOS SIFÕES</div>
+      <h1>Dashboard de Comissionamento Hidráulico dos Sifões — premissa revisada</h1>
+      <p>O painel adota agora uma <strong>programação operacional por etapas</strong>: o sistema inicia cheio e em regime permanente com <strong>2,0, 3,0 ou 4,0 m³/s</strong>; a partir daí, cada manobra pode definir livremente a <strong>nova vazão comandada</strong> e a <strong>duração da etapa</strong>. A sequência prossegue até a vazão necessária, que pode ultrapassar 9,5 m³/s para compensar retiradas intermediárias.</p>
+      <div class="hero-kpi">
+        <div class="box"><span>Regime inicial</span><strong>2 / 3 / 4</strong></div>
+        <div class="box"><span>Etapas</span><strong>Q e Δt livres</strong></div>
+        <div class="box"><span>Meta-base</span><strong>9,5 m³/s</strong></div>
+        <div class="box"><span>Novo foco</span><strong>eventos + ondas</strong></div>
+      </div>
+    </div>
+    <div class="sub" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)">
+      <h3 style="color:#fff">Mensagem central</h3>
+      <p style="color:#dceef8;margin-top:0">O ensaio passa a ser tratado como uma <strong>sequência de eventos hidráulicos discretos</strong> em um sistema já cheio e em escoamento: cada alteração de vazão possui seu próprio instante, duração e repercussão a jusante.</p>
+      <p style="color:#dceef8"><strong>Consequência:</strong> cada degrau gera uma perturbação própria. O painel passa a acompanhar chegada da onda, sobreposição entre eventos, vazão local estimada e screening de transiente associado a cada manobra.</p>
+    </div>
+  </div>
+</section>
+<div class="shell">
+  <aside class="side">
+    <a href="#mapa">Mapa inicial</a>
+    <a href="#premissa">Premissa e implicações</a>
+    <a href="#pom">POM e condições de contorno</a>
+    <a href="#cav">Simulação CAV — Curral Velho</a>
+    <a href="#sim">Programação por etapas</a>
+    <a href="#vazoes6">Vazões nos 6 sifões</a>
+    <a href="#estrategia">Estratégia de preparação 6 sifões</a>
+    <a href="#onda">Propagação e onda hidráulica</a>
+    <a href="#matriz">Matriz de eventos e transientes</a>
+    <a href="#protocolo">Protocolo operacional</a>
+    <a href="#dossie">Dossiê operacional</a>
+    <div class="note"><strong>Uso do painel</strong><p>Ferramenta de screening e consolidação técnica. Não substitui o modelo HAMMER oficial, os dados as built, a validação de campo nem a liberação formal da operação.</p></div>
+  </aside>
+  <main>
+    <section class="panel" id="mapa">
+      <div class="sec-head"><div class="sec-title"><div class="badgeN">1</div><h2>Mapa geográfico detalhado do KMZ</h2></div><div class="muted">Leaflet 1.9 · nós extraídos do SISTEMA geral.kmz · base Esri</div></div>
+      <div class="map-layerbar" style="margin-bottom:10px">
+        <button class="btn active" id="fitMapBtn">Enquadrar sistema</button>
+        <button class="btn" id="focusTestBtn">Focar Curral Velho → Juazeirinho</button>
+      </div>
+      <div id="map"></div>
+      <div id="mapFallback" class="map-fallback"><strong>Mapa geográfico indisponível.</strong><p>Se a biblioteca Leaflet ou os tiles externos não carregarem, o restante do dashboard continua funcionando. O mapa depende apenas do Leaflet e dos serviços públicos Esri; o arquivo KMZ não é carregado no browser.</p></div>
+      <div class="map-note"><strong>Como o mapa foi construído:</strong> o <code>SISTEMA geral.kmz</code> foi lido fora do app. As coordenadas dos nós e das bocas dos sifões foram extraídas e gravadas no JavaScript. A quilometragem exibida é a <strong>quilometragem operacional do dossiê</strong>, não a distância geodésica calculada pelo Leaflet.</div>
+    </section>
+    <section class="panel" id="premissa">
+<div class="sec-head"><div class="sec-title"><div class="badgeN">2</div><h2>Premissa revisada e implicações</h2></div><div class="muted">especificação funcional da operação por etapas</div></div>
+<div class="kpis"><div class="kpi"><span>Estado do sistema</span><strong>Cheio</strong><small>Canal e sifões com água antes do ensaio.</small></div><div class="kpi"><span>Linha antiga</span><strong>Fechada</strong><small>Isolada e verificada antes do início das manobras.</small></div><div class="kpi"><span>Regime inicial</span><strong>2 / 3 / 4 m³/s</strong><small>Condição permanente selecionável pelo operador.</small></div><div class="kpi"><span>Operação</span><strong>Etapas livres</strong><small>Cada etapa possui Q e duração próprias.</small></div></div>
+<div class="spec-grid" style="margin-top:12px">
+<div class="spec-card"><b>RF-01 · Estado inicial</b><small>Selecionar Q inicial de 2,0; 3,0 ou 4,0 m³/s e assumir regime permanente no instante zero.</small></div>
+<div class="spec-card"><b>RF-02 · Meta e compensação</b><small>Definir Q-meta livre. A vazão necessária em Curral Velho pode ser Q-meta + retiradas quando a compensação estiver ativa.</small></div>
+<div class="spec-card"><b>RF-03 · Agenda por etapas</b><small>Cada etapa registra instante, vazão comandada e duração. Não existe limite global de 15–180 min nem duração total pré-fixada.</small></div>
+<div class="spec-card"><b>RF-04 · Geração + edição</b><small>Permitir gerar uma sequência por ΔQ/Δt padrão e depois editar individualmente qualquer vazão ou duração.</small></div>
+<div class="spec-card"><b>RF-05 · Propagação</b><small>Cada mudança de Q gera sua própria onda, com horário estimado de chegada em cada sifão.</small></div>
+<div class="spec-card"><b>RF-06 · Superposição</b><small>Sinalizar quando uma nova manobra ocorre antes de a perturbação anterior chegar ou estabilizar nos trechos avaliados.</small></div>
+<div class="spec-card"><b>RF-07 · Transientes</b><small>Calcular indicador/ΔH de screening por evento usando a base HAMMER disponível, sem apresentar o resultado como pressão transitória certificada.</small></div>
+<div class="spec-card"><b>RF-08 · CAV integrada</b><small>O balanço do Curral Velho deve usar a mesma função Q(t) da agenda operacional, incluindo vazões acima de 9,5 m³/s.</small></div>
+<div class="spec-card"><b>RF-09 · Estado local</b><small>Em qualquer instante, mostrar Q estimada, última onda recebida, próxima onda e condição hidráulica de cada sifão.</small></div>
+</div>
+<div class="info"><strong>Regra-mestra:</strong> o tempo total deixa de ser entrada. Ele é calculado pela soma das durações das etapas. A vazão final também não é travada em 9,5 m³/s; ela decorre da meta operacional, das retiradas e/ou da programação definida pelo operador.</div>
+</section>
+
+    <section class="panel" id="pom">
+      <div class="sec-head">
+        <div class="sec-title"><div class="badgeN">2A</div><h2>POM incorporado — cadeia hidráulica e condições de contorno</h2></div>
+        <div class="muted">dados operacionais dos Trechos 2 e 3</div>
+      </div>
+      <div class="pom-grid">
+        <div class="sub">
+          <h3>Estruturas a montante que passam a integrar o teste</h3>
+          <table>
+            <thead><tr><th>Estrutura</th><th>Localização</th><th>Característica</th></tr></thead>
+            <tbody>
+              <tr><td><b>Tomada Curral Velho</b></td><td>km 0</td><td>2 comportas tipo segmento, acionamento hidráulico, 3,50 × 3,90 m</td></tr>
+              <tr><td><b>Comporta de linha C-01</b></td><td>km 8,820</td><td>2 comportas planas 2,50 × 2,50 m, servomotor</td></tr>
+              <tr><td><b>Comporta de linha C-02</b></td><td>km 16,260</td><td>2 comportas planas 2,50 × 2,50 m, servomotor</td></tr>
+              <tr><td><b>Sifão Palhano</b></td><td>OCM km 23,135 → OCJ km 29,530</td><td>condição de contorno hidráulica antes de Boa Vista</td></tr>
+              <tr><td><b>Comporta de linha C-03</b></td><td>km 45,805</td><td>2 comportas planas 2,50 × 2,50 m, servomotor</td></tr>
+            </tbody>
+          </table>
+          <div class="info"><strong>Implicação:</strong> Curral Velho permanece como comando mestre da rampa, porém Palhano e as comportas de linha devem estar previamente configurados e mantidos estáveis. O ensaio é hidraulicamente integrado, não apenas um teste isolado dos seis sifões.</div>
+        </div>
+        <div class="sub">
+          <h3>Seis sifões — POM × modelo HAMMER</h3>
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Sifão</th><th>OCM</th><th>DS a montante</th><th>L POM</th><th>L HAMMER</th><th>Comporta</th></tr></thead>
+            <tbody>
+              <tr><td><b>Boa Vista</b></td><td>32,920 km</td><td>DS-04 · 32,740 km</td><td>2.112 m</td><td>2.065,95 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+              <tr><td><b>Mão Ruiva</b></td><td>37,361 km</td><td>DS-05 · 37,280 km</td><td>1.172 m</td><td>1.123,08 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+              <tr><td><b>Melancias</b></td><td>39,540 km</td><td>DS-06 · 39,300 km</td><td>1.201 m</td><td>1.160,86 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+              <tr><td><b>Pirangi</b></td><td>T3 · 22,085 km</td><td>DS-04 · 22,000 km</td><td>1.050 m</td><td>566,81 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+              <tr><td><b>Serrote</b></td><td>T3 · 29,130 km</td><td>DS-05 · 29,050 km</td><td>2.485 m</td><td>1.826,74 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+              <tr><td><b>Juazeirinho</b></td><td>T3 · 35,035 km</td><td>DS-06 · 34,950 km</td><td>1.415 m</td><td>860,53 m</td><td>plana 2,50 × 2,50 m · servomotor</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="warning-box"><strong>Não misturar comprimentos:</strong> o POM mede OCM→OCJ e pode incluir transições; a análise transitória utiliza o comprimento hidráulico efetivo do conduto pressurizado do modelo HAMMER. A diferença deve ser explicitada no relatório final, não “corrigida” automaticamente.</div>
+        </div>
+      </div>
+      <div class="source-strip">Também foram incorporadas as descargas de segurança imediatamente a montante dos sifões e a presença de ventosas no POM. As curvas de admissão/expulsão de ar das ventosas continuam não disponíveis nos anexos, portanto a capacidade de proteção contra ar não é certificada por este painel.</div>
+    </section>
+
+    <section class="panel" id="cav">
+      <div class="sec-head">
+        <div class="sec-title"><div class="badgeN">2B</div><h2>Simulação CAV — Açude Curral Velho</h2></div>
+        <div class="muted">curva cota–área–volume + balanço durante a programação</div>
+      </div>
+      <div class="info"><strong>Objetivo:</strong> verificar como a cota do Curral Velho responde ao ensaio quando a descarga aumenta de 2/3 para 9,5 m³/s. O balanço usa a CAV fornecida e a afluência informada pelo operador. O valor <strong>83,77 m</strong> é apenas um piso energético teórico de referência calculado com a seção normal do canal para 9,5 m³/s; <strong>não é uma cota operacional mínima homologada</strong>.</div>
+      <div class="cav-controls">
+        <div class="cav-control"><label>Cota inicial do Curral Velho</label><input id="cavZ0" type="number" min="74.1" max="89.1" step="0.05" value="84.60"></div>
+        <div class="cav-control"><label>Afluência ao reservatório</label><input id="cavQin" type="number" min="0" max="25" step="0.1" value="2.0"></div>
+        <div class="cav-control"><label>Horizonte da simulação (h)</label><input id="cavHours" type="number" min="1" step="1" value="24"></div>
+        <div class="cav-control"><label>Cota-limite de referência</label><input id="cavLimit" type="number" min="74.1" max="89.1" step="0.01" value="83.77"></div>
+        <div class="cav-control"><label>Preset de reposição</label><select id="cavPreset"><option value="manual">Manual</option><option value="q0">Qin = Q inicial</option><option value="qmeta">Qin = 9,5 m³/s</option><option value="qout">Qin = descarga-alvo do Curral</option></select></div>
+      </div>
+      <div class="cav-results" id="cavResults"></div>
+      <div class="cav-chart-grid">
+        <div class="chart"><h3 style="margin-top:0">Curva CAV — volume × cota</h3><svg id="cavCurveChart" viewBox="0 0 650 320"></svg></div>
+        <div class="chart"><h3 style="margin-top:0">Cota simulada durante o ensaio</h3><svg id="cavLevelChart" viewBox="0 0 650 320"></svg></div>
+      </div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="sub"><h3>Balanço horário</h3><div class="table-scroll"><table><thead><tr><th>Tempo</th><th>Q saída</th><th>Q entrada</th><th>Cota</th><th>Volume</th></tr></thead><tbody id="cavBalanceTable"></tbody></table></div></div>
+        <div class="sub"><h3>Leitura de engenharia</h3><div id="cavInterpretation"></div></div>
+      </div>
+      <div class="source-strip">Fonte da simulação: arquivo <code>cav_curral_velho.csv</code>. Capacidade de referência da ficha: 12,17 hm³ na cota 84,60 m; acima dessa cota a própria base contém interpolações/extrapolações, que devem ser usadas apenas para screening.</div>
+    </section>
+
+    <section class="panel" id="sim">
+<div class="sec-head"><div class="sec-title"><div class="badgeN">3</div><h2>Programador operacional por etapas</h2></div><div class="muted">Q(t) discreta · duração própria por etapa · propagação evento-a-evento</div></div>
+<div class="program-controls">
+<div class="ctrl"><label><span>Vazão inicial</span><b id="q0lbl">2,0 m³/s</b></label><select id="q0"><option value="2">2,0 m³/s</option><option value="3">3,0 m³/s</option><option value="4">4,0 m³/s</option></select></div>
+<div class="ctrl"><label><span>Q-meta requerida</span><b id="qMetaLbl">9,5 m³/s</b></label><input id="qMeta" type="number" min="0.1" step="0.1" value="9.5"></div>
+<div class="ctrl"><label><span>Retirada agregada</span><b id="wLbl">0,00 m³/s</b></label><input id="withdrawal" type="number" min="0" step="0.05" value="0"></div>
+<div class="ctrl"><label><span>Compensar retirada?</span><b id="compLbl">Sim</b></label><select id="compensate"><option value="1">Sim</option><option value="0">Não</option></select></div>
+<div class="ctrl"><label><span>ΔQ padrão</span><b id="dqLbl">1,0 m³/s</b></label><input id="defaultDQ" type="number" min="0.05" step="0.05" value="1"></div>
+<div class="ctrl"><label><span>Δt padrão</span><b id="dtLbl">30 min</b></label><input id="defaultDT" type="number" min="1" step="1" value="30"></div>
+<div class="ctrl"><label><span>Sifão de análise</span><b id="sifLbl">Boa Vista</b></label><select id="sifao"></select></div>
+</div>
+<div class="program-actions"><button class="btn active" id="generateProgram">Gerar sequência até Q necessária</button><button class="btn" id="addStage">+ Adicionar etapa</button><button class="btn danger" id="resetProgram">Restaurar exemplo</button><span class="muted">Após gerar, edite livremente Q e duração de qualquer etapa.</span></div>
+<div class="sub"><h3 style="margin-top:0">Agenda operacional editável</h3><div class="table-scroll"><table class="program-table"><thead><tr><th>Etapa</th><th>Início</th><th>Q comandada (m³/s)</th><th>Duração até próxima manobra (min)</th><th>ΔQ (m³/s)</th><th>dQ/dt médio</th><th>Ação</th></tr></thead><tbody id="programTable"></tbody></table></div></div>
+<div class="results" id="simResultsTop"></div><div class="results" id="simResultsBottom"></div>
+<div class="grid2"><div class="sub"><h3>Implicações automáticas</h3><div id="implications"></div></div><div class="sub"><h3>Propagação da primeira perturbação</h3><table><thead><tr><th>Sifão</th><th>Onda dinâmica</th><th>Advecção inicial</th><th>Cinemática @ Q-meta</th></tr></thead><tbody id="arrivalTable"></tbody></table></div></div>
+</section>
+
+    <section class="panel" id="vazoes6">
+      <div class="sec-head">
+        <div class="sec-title"><div class="badgeN">3C</div><h2>Vazões estimadas nos seis sifões</h2></div>
+        <div class="muted">propagação das etapas e estado hidráulico local</div>
+      </div>
+      <div class="flow-controls">
+        <div class="flow-control"><label><span>Instante após início da programação</span><b id="flowTimeLbl">12,0 h</b></label><input id="flowTime" type="number" min="0" step="0.25" value="12"></div>
+        <div class="flow-control"><label><span>Horizonte do gráfico (h)</span></label><input id="flowHorizon" type="number" min="1" step="1" value="48"></div>
+        <div class="flow-control"><label><span>Referência de estabilização</span></label><select id="flowRef"><option value="kinematic" selected>Onda cinemática @ Q-meta</option><option value="initial">Advecção pela V inicial</option></select></div>
+      </div>
+      <div class="chart"><h3 style="margin-top:0">Q local estimada — todos os sifões</h3><svg id="allFlowsChart" viewBox="0 0 1200 390"></svg></div>
+      <div class="sub" style="margin-top:12px">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Sifão</th><th>Dist. acum.</th><th>Onda dinâmica</th><th>Ref. cinemática @ 9,5</th><th>Q no instante</th><th>Velocidade no tubo</th><th>Lâmina normal equivalente</th><th>Meta</th><th>Estado</th></tr></thead>
+            <tbody id="sixFlowTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="info"><strong>Interpretação:</strong> a vazão local é uma aproximação de screening construída pela superposição temporal dos eventos programados em Curral Velho e seus tempos estimados de chegada ao trecho. Ela serve para planejar horários, checkpoints e instrumentação. <strong>Não substitui uma simulação Saint-Venant/MOC do sistema completo</strong> nem deve ser tratada como previsão metrológica exata.</div>
+    </section>
+
+    <section class="panel" id="estrategia">
+      <div class="sec-head"><div class="sec-title"><div class="badgeN">3B</div><h2>Preparação dos 6 sifões antes da programação</h2></div><div class="muted">fase prévia independente da agenda de vazões</div></div>
+      <div class="strategy-grid">
+        <div class="strategy-card reference"><h3>Premissa operacional</h3><p>Sistema cheio, linha antiga fechada e linha nova em regime permanente com a vazão inicial selecionada no programador. A programação de vazões só começa depois da preparação e da confirmação de estabilidade.</p></div>
+        <div class="strategy-card primary"><h3>Nova estratégia operacional a avaliar</h3><p>Se alguma comporta da linha nova ainda estiver estrangulando o escoamento em 2,0 m³/s, preparar o caminho hidráulico antes do ensaio, preferencialmente <strong>do último sifão para o primeiro</strong>. Se as seis já estiverem em posição aberta/não restritiva e estáveis, <strong>não há motivo hidráulico para remanobrá-las</strong> no dia do teste; inicia-se diretamente a programação de etapas em Curral Velho.</p></div>
+      </div>
+      <div class="info"><strong>Sequência condicional de preparação:</strong> Juazeirinho → Serrote → Pirangi → Melancias → Mão Ruiva → Boa Vista, <em>somente se houver necessidade de reposicionamento</em>. A lógica é deixar o percurso de jusante previamente disponível antes de aumentar a vazão na origem. <strong>Esta sequência é uma proposta operacional de engenharia; os documentos existentes não a estabelecem como procedimento oficial.</strong></div>
+      <div class="seq-flow" aria-label="Sequência de abertura das comportas">
+        <div class="seq-node"><b>1</b>Juazeirinho</div><div class="seq-node critical"><b>2</b>Serrote</div><div class="seq-node"><b>3</b>Pirangi</div><div class="seq-node"><b>4</b>Melancias</div><div class="seq-node"><b>5</b>Mão Ruiva</div><div class="seq-node critical"><b>6</b>Boa Vista</div>
+      </div>
+      <div class="tiny-note">Serrote e Boa Vista recebem destaque por apresentarem maior criticidade nos estudos de transientes existentes. Os tempos de 30 e 90 min citados nesses estudos dizem respeito a <strong>fechamento</strong> de comportas, não constituindo automaticamente tempos obrigatórios de abertura.</div>
+
+      <div class="op-controls">
+<div class="op-control"><label>Hold point após cada abertura</label><input id="prepHold" type="number" min="1" step="1" value="10" /></div>
+<div class="op-control"><label>Retiradas intermediárias</label><input id="prepWithdrawal" type="number" min="0" step="0.05" value="0" /></div>
+<div class="op-control"><label>Q inicial (sincronizada)</label><input id="prepQ0View" type="text" readonly value="2,0 m³/s" /></div>
+<div class="op-control"><label>Q final programada</label><input id="prepQFinalView" type="text" readonly value="9,5 m³/s" /></div>
+</div><div class="op-summary" id="prepSummary"></div>
+      <div class="grid2" style="margin-top:12px">
+        <div class="sub"><h3>Plano de abertura das 6 comportas</h3><table><thead><tr><th>Ordem</th><th>Sifão</th><th>Ação</th><th>Hold point</th></tr></thead><tbody id="prepGateTable"></tbody></table></div>
+        <div class="sub"><h3>Agenda de vazões após preparação</h3><table class="ramp-table"><thead><tr><th>Etapa</th><th>Início</th><th>Q em Curral Velho</th><th>Duração</th></tr></thead><tbody id="prepRampTable"></tbody></table></div>
+      </div>
+      <div class="critique">
+        <div class="good"><strong>Pontos favoráveis da estratégia</strong><ul class="tight"><li>Evita manobrar as seis comportas enquanto a onda de aumento de vazão já está propagando.</li><li>Prepara primeiro os sifões mais a jusante e termina por Boa Vista, o primeiro a receber a nova condição hidráulica vinda de Curral Velho.</li><li>Separa claramente a <strong>fase de preparação</strong> da <strong>fase de programação</strong>.</li><li>Permite interromper o procedimento antes de elevar a vazão caso alguma comporta apresente comportamento anormal.</li></ul></div>
+        <div class="care"><strong>Condicionantes / pontos de atenção</strong><ul class="tight"><li>Não adotar percentual de abertura como equivalente direto de vazão sem a curva da comporta/atuador.</li><li>Confirmar que a linha antiga está efetivamente isolada antes da rampa.</li><li>Comprovar linha nova cheia e sem bolsões relevantes de ar.</li><li>Compensar retiradas intermediárias: Q<sub>Curral Velho</sub> = 9,5 + ΣQ<sub>retiradas</sub>.</li><li>Validar no modelo de transientes a abertura sequencial e a programação escolhida antes do procedimento oficial.</li></ul></div>
+      </div>
+      <div class="info"><strong>Critério operacional sugerido:</strong> abrir uma comporta, observar níveis/pressões/ventosas/vibração e somente então liberar a abertura seguinte. Depois de Boa Vista, manter todas as seis abertas em regime reduzido, confirmar estabilidade global e só então iniciar a programação em Curral Velho. O instante em que Curral Velho atinge a vazão final programada <strong>não é automaticamente o início da medição oficial</strong>; a medição deve aguardar a estabilização no sifão avaliado.</div>
+    </section>
+
+    <section class="panel" id="onda"><div class="sec-head"><div class="sec-title"><div class="badgeN">4</div><h2>Animação hidráulica — açude → canal → sifões</h2></div><div class="muted">filme simplificado da água saindo do Curral Velho e chegando aos sifões</div></div><div class="chart"><svg id="animSvg" viewBox="0 0 1280 360"></svg></div><div class="anim-controls" style="margin-top:10px"><button class="btn" id="playAnim">▶ Reproduzir</button><button class="btn" id="pauseAnim">⏸ Pausar</button><button class="btn" id="resetAnim">↺ Reiniciar</button><span id="animText" class="muted">A frente azul representa a propagação da condição de teste ao longo do sistema. Cada sifão é destacado quando a perturbação/onda o alcança.</span></div><div class="info">A animação está coerente com a nova premissa: o sistema já está cheio, a linha antiga está fechada e a onda operacional é produzida pela elevação de vazão na <strong>linha nova</strong>, partindo do <strong>Açude Curral Velho</strong>, atravessando a condição de contorno do <strong>Sifão Palhano</strong> e atingindo, em sequência, <strong>Boa Vista</strong>, <strong>Mão Ruiva</strong>, <strong>Melancias</strong>, <strong>Pirangi</strong>, <strong>Serrote</strong> e <strong>Juazeirinho</strong>.</div></section>
+    <section class="panel" id="graficos"><div class="sec-head"><div class="sec-title"><div class="badgeN">5</div><h2>Gráficos e comparações</h2></div><div class="muted">efeitos das etapas em regime cheio</div></div><div class="grid2"><div class="chart"><h3 style="margin-top:0">ΔH de screening por sifão</h3><svg id="barChart" viewBox="0 0 620 340"></svg></div><div class="chart"><h3 style="margin-top:0">Q local estimada ao longo do tempo</h3><svg id="flowChart" viewBox="0 0 620 340"></svg></div></div></section>
+    <section class="panel matrix" id="matriz"><div class="sec-head"><div class="sec-title"><div class="badgeN">6</div><h2>Matriz de eventos e transientes</h2></div><div class="muted">screening evento-a-evento no sifão selecionado</div></div><div class="sub"><table id="matrixTable"></table></div></section>
+    <section class="panel" id="protocolo"><div class="sec-head"><div class="sec-title"><div class="badgeN">7</div><h2>Protocolo operacional revisado</h2></div><div class="muted">passo a passo para o novo procedimento</div></div><div class="timeline"><div class="step"><div class="n">1</div><h4>Preparação</h4><p>Conferir que canal, sifões e nova linha estão cheios; verificar ventosas, níveis, vazamentos e isolamento da linha antiga.</p></div><div class="step"><div class="n">2</div><h4>Regime reduzido</h4><p>Manter a nova linha operando de forma estável com 2,0 ou 3,0 m³/s, com registros de nível e eventuais retiradas intermediárias.</p></div><div class="step"><div class="n">3</div><h4>Programação controlada</h4><p>Executar a agenda de etapas em Curral Velho, respeitando Q e duração definidas para cada evento e compensando retiradas quando aplicável.</p></div><div class="step"><div class="n">4</div><h4>Estabilização</h4><p>Aguardar a propagação da condição hidráulica e a estabilização local no sifão alvo antes da medição oficial.</p></div></div><div class="grid2"><div class="sub"><h3>Cuidados adicionais</h3><ul class="tight"><li>Documentar a comprovação da condição cheia e desaerada.</li><li>Adotar sequência coerente e documentar qualquer aumento, redução ou pausa operacional.</li><li>Evitar saltos bruscos de abertura/fechamento.</li><li>Se houver retirada intermediária, explicitar se foi ou não compensada.</li><li>Medir preferencialmente a jusante para comprovar a passagem efetiva da vazão pela estrutura.</li></ul></div><div class="sub"><h3>O que solicitar ao consórcio</h3><ul class="tight"><li>Confirmação formal de que a linha antiga pode permanecer fechada com água em segurança.</li><li>Procedimento específico para verificação de linha cheia e ausência de ar aprisionado.</li><li>Curvas abertura×vazão das comportas de Curral Velho e limites dos atuadores; curvas de admissão/expulsão das ventosas.</li><li>Modelo/checagem de transientes considerando a agenda real de etapas, inclusive Q inicial de 2/3/4 m³/s e vazões finais acima de 9,5 m³/s quando aplicável.</li><li>Plano de contingência para abortagem, esvaziamento controlado e retomada.</li></ul></div></div></section>
+    <section class="panel" id="dossie"><div class="sec-head"><div class="sec-title"><div class="badgeN">8</div><h2>Dossiê técnico operacional revisado</h2></div><div class="muted">arquivos gerados a partir da nova premissa</div></div><p class="muted">Foram gerados um novo dossiê em DOCX e PDF, estruturados especificamente para os dois cenários-base: <strong>2,0 → 9,5 m³/s</strong> e <strong>3,0 → 9,5 m³/s</strong>, destacando implicações hidráulicas, protocolo revisado, riscos, tabelas e solicitações ao consórcio.</p><div class="doc-links"><a href="Analise_Tecnica_Revisada_Teste_Sifoes_Lote4.docx">Abrir análise técnica revisada (DOCX)</a><a href="cav_curral_velho.csv">Abrir base CAV (CSV)</a></div></section>
+  </main>
+</div>
+<footer><div>Versão V7.0 · programação por etapas + CAV + propagação + screening de transientes</div><div>Base: POM T2/T3, CAV Curral Velho, KMZ, nota HAMMER de transientes e metodologia de medição</div></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+const cavData = [{"z":74.1,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.2,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.3,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.4,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.5,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.6,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.7,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.8,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.9,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":75.0,"area":0.0,"vol":0.0,"pct":0.0,"origem":"ficha"},{"z":75.1,"area":0.0004,"vol":127.0,"pct":0.0,"origem":"interp."},{"z":75.2,"area":0.0017,"vol":498.0,"pct":0.0,"origem":"interp."},{"z":75.3,"area":0.0037,"vol":1096.0,"pct":0.01,"origem":"interp."},{"z":75.4,"area":0.0064,"vol":1905.0,"pct":0.02,"origem":"interp."},{"z":75.5,"area":0.0095,"vol":2909.0,"pct":0.02,"origem":"interp."},{"z":75.6,"area":0.0132,"vol":4093.0,"pct":0.03,"origem":"interp."},{"z":75.7,"area":0.0171,"vol":5440.0,"pct":0.04,"origem":"interp."},{"z":75.8,"area":0.0213,"vol":6934.0,"pct":0.06,"origem":"interp."},{"z":75.9,"area":0.0256,"vol":8560.0,"pct":0.07,"origem":"interp."},{"z":76.0,"area":0.03,"vol":10300.0,"pct":0.08,"origem":"ficha"},{"z":76.1,"area":0.0349,"vol":12796.0,"pct":0.11,"origem":"interp."},{"z":76.2,"area":0.0407,"vol":16615.0,"pct":0.14,"origem":"interp."},{"z":76.3,"area":0.0475,"vol":21627.0,"pct":0.18,"origem":"interp."},{"z":76.4,"area":0.0549,"vol":27703.0,"pct":0.23,"origem":"interp."},{"z":76.5,"area":0.0631,"vol":34715.0,"pct":0.29,"origem":"interp."},{"z":76.6,"area":0.0718,"vol":42534.0,"pct":0.35,"origem":"interp."},{"z":76.7,"area":0.0809,"vol":51030.0,"pct":0.42,"origem":"interp."},{"z":76.8,"area":0.0904,"vol":60076.0,"pct":0.49,"origem":"interp."},{"z":76.9,"area":0.1001,"vol":69542.0,"pct":0.57,"origem":"interp."},{"z":77.0,"area":0.11,"vol":79300.0,"pct":0.65,"origem":"ficha"},{"z":77.1,"area":0.1201,"vol":90037.0,"pct":0.74,"origem":"interp."},{"z":77.2,"area":0.1307,"vol":102467.0,"pct":0.84,"origem":"interp."},{"z":77.3,"area":0.1419,"vol":116500.0,"pct":0.96,"origem":"interp."},{"z":77.4,"area":0.1536,"vol":132045.0,"pct":1.09,"origem":"interp."},{"z":77.5,"area":0.166,"vol":149011.0,"pct":1.22,"origem":"interp."},{"z":77.6,"area":0.1791,"vol":167309.0,"pct":1.37,"origem":"interp."},{"z":77.7,"area":0.193,"vol":186847.0,"pct":1.54,"origem":"interp."},{"z":77.8,"area":0.2078,"vol":207535.0,"pct":1.71,"origem":"interp."},{"z":77.9,"area":0.2234,"vol":229283.0,"pct":1.88,"origem":"interp."},{"z":78.0,"area":0.24,"vol":252000.0,"pct":2.07,"origem":"ficha"},{"z":78.1,"area":0.2582,"vol":276484.0,"pct":2.27,"origem":"interp."},{"z":78.2,"area":0.2786,"vol":303544.0,"pct":2.49,"origem":"interp."},{"z":78.3,"area":0.3008,"vol":333108.0,"pct":2.74,"origem":"interp."},{"z":78.4,"area":0.3246,"vol":365102.0,"pct":3.0,"origem":"interp."},{"z":78.5,"area":0.3499,"vol":399453.0,"pct":3.28,"origem":"interp."},{"z":78.6,"area":0.3764,"vol":436087.0,"pct":3.58,"origem":"interp."},{"z":78.7,"area":0.4039,"vol":474932.0,"pct":3.9,"origem":"interp."},{"z":78.8,"area":0.4321,"vol":515915.0,"pct":4.24,"origem":"interp."},{"z":78.9,"area":0.4609,"vol":558962.0,"pct":4.59,"origem":"interp."},{"z":79.0,"area":0.49,"vol":604000.0,"pct":4.96,"origem":"ficha"},{"z":79.1,"area":0.5199,"vol":652522.0,"pct":5.36,"origem":"interp."},{"z":79.2,"area":0.5513,"vol":705858.0,"pct":5.8,"origem":"interp."},{"z":79.3,"area":0.5839,"vol":763692.0,"pct":6.28,"origem":"interp."},{"z":79.4,"area":0.6178,"vol":825710.0,"pct":6.78,"origem":"interp."},{"z":79.5,"area":0.6527,"vol":891596.0,"pct":7.33,"origem":"interp."},{"z":79.6,"area":0.6887,"vol":961034.0,"pct":7.9,"origem":"interp."},{"z":79.7,"area":0.7255,"vol":1033708.0,"pct":8.49,"origem":"interp."},{"z":79.8,"area":0.763,"vol":1109305.0,"pct":9.12,"origem":"interp."},{"z":79.9,"area":0.8012,"vol":1187507.0,"pct":9.76,"origem":"interp."},{"z":80.0,"area":0.84,"vol":1268000.0,"pct":10.42,"origem":"ficha"},{"z":80.1,"area":0.8795,"vol":1352316.0,"pct":11.11,"origem":"interp."},{"z":80.2,"area":0.9201,"vol":1442030.0,"pct":11.85,"origem":"interp."},{"z":80.3,"area":0.9618,"vol":1536891.0,"pct":12.63,"origem":"interp."},{"z":80.4,"area":1.0045,"vol":1636650.0,"pct":13.45,"origem":"interp."},{"z":80.5,"area":1.0481,"vol":1741054.0,"pct":14.31,"origem":"interp."},{"z":80.6,"area":1.0927,"vol":1849855.0,"pct":15.2,"origem":"interp."},{"z":80.7,"area":1.1382,"vol":1962800.0,"pct":16.13,"origem":"interp."},{"z":80.8,"area":1.1846,"vol":2079640.0,"pct":17.09,"origem":"interp."},{"z":80.9,"area":1.2319,"vol":2200123.0,"pct":18.08,"origem":"interp."},{"z":81.0,"area":1.28,"vol":2324000.0,"pct":19.1,"origem":"ficha"},{"z":81.1,"area":1.3294,"vol":2452738.0,"pct":20.15,"origem":"interp."},{"z":81.2,"area":1.3803,"vol":2587822.0,"pct":21.26,"origem":"interp."},{"z":81.3,"area":1.4327,"vol":2729029.0,"pct":22.42,"origem":"interp."},{"z":81.4,"area":1.4862,"vol":2876135.0,"pct":23.63,"origem":"interp."},{"z":81.5,"area":1.5407,"vol":3028915.0,"pct":24.89,"origem":"interp."},{"z":81.6,"area":1.5959,"vol":3187147.0,"pct":26.19,"origem":"interp."},{"z":81.7,"area":1.6517,"vol":3350605.0,"pct":27.53,"origem":"interp."},{"z":81.8,"area":1.7078,"vol":3519066.0,"pct":28.92,"origem":"interp."},{"z":81.9,"area":1.7639,"vol":3692305.0,"pct":30.34,"origem":"interp."},{"z":82.0,"area":1.82,"vol":3870100.0,"pct":31.8,"origem":"ficha"},{"z":82.1,"area":1.8799,"vol":4055532.0,"pct":33.32,"origem":"interp."},{"z":82.2,"area":1.9462,"vol":4250988.0,"pct":34.93,"origem":"interp."},{"z":82.3,"area":2.0163,"vol":4455205.0,"pct":36.61,"origem":"interp."},{"z":82.4,"area":2.0876,"vol":4666915.0,"pct":38.35,"origem":"interp."},{"z":82.5,"area":2.1577,"vol":4884855.0,"pct":40.14,"origem":"interp."},{"z":82.6,"area":2.2239,"vol":5107758.0,"pct":41.97,"origem":"interp."},{"z":82.7,"area":2.2838,"vol":5334359.0,"pct":43.83,"origem":"interp."},{"z":82.8,"area":2.3348,"vol":5563394.0,"pct":45.71,"origem":"interp."},{"z":82.9,"area":2.3744,"vol":5793596.0,"pct":47.61,"origem":"interp."},{"z":83.0,"area":2.4,"vol":6023700.0,"pct":49.5,"origem":"ficha"},{"z":83.1,"area":2.4148,"vol":6255689.0,"pct":51.4,"origem":"interp."},{"z":83.2,"area":2.4249,"vol":6492160.0,"pct":53.35,"origem":"interp."},{"z":83.3,"area":2.4322,"vol":6732775.0,"pct":55.32,"origem":"interp."},{"z":83.4,"area":2.4388,"vol":6977194.0,"pct":57.33,"origem":"interp."},{"z":83.5,"area":2.4466,"vol":7225076.0,"pct":59.37,"origem":"interp."},{"z":83.6,"area":2.4576,"vol":7476081.0,"pct":61.43,"origem":"interp."},{"z":83.7,"area":2.4738,"vol":7729871.0,"pct":63.52,"origem":"interp."},{"z":83.8,"area":2.5148,"vol":7976813.0,"pct":65.54,"origem":"interp."},{"z":83.9,"area":2.6047,"vol":8220501.0,"pct":67.55,"origem":"interp."},{"z":84.0,"area":2.69,"vol":8522000.0,"pct":70.02,"origem":"ficha"},{"z":84.1,"area":2.7472,"vol":8967580.0,"pct":73.69,"origem":"interp."},{"z":84.2,"area":2.7949,"vol":9560058.0,"pct":78.55,"origem":"interp."},{"z":84.3,"area":2.8386,"vol":10237987.0,"pct":84.12,"origem":"interp."},{"z":84.4,"area":2.8837,"vol":10939918.0,"pct":89.89,"origem":"interp."},{"z":84.5,"area":2.9357,"vol":11604405.0,"pct":95.35,"origem":"interp."},{"z":84.6,"area":3.0,"vol":12170000.0,"pct":100.0,"origem":"ficha"},{"z":84.7,"area":3.0839,"vol":12645435.0,"pct":103.91,"origem":"interp."},{"z":84.8,"area":3.1891,"vol":13084513.0,"pct":107.51,"origem":"interp."},{"z":84.9,"area":3.3128,"vol":13493390.0,"pct":110.87,"origem":"interp."},{"z":85.0,"area":3.4525,"vol":13878225.0,"pct":114.04,"origem":"interp."},{"z":85.1,"area":3.6052,"vol":14245175.0,"pct":117.05,"origem":"interp."},{"z":85.2,"area":3.7684,"vol":14600400.0,"pct":119.97,"origem":"interp."},{"z":85.3,"area":3.9392,"vol":14950056.0,"pct":122.84,"origem":"interp."},{"z":85.4,"area":4.1149,"vol":15300301.0,"pct":125.72,"origem":"interp."},{"z":85.5,"area":4.2929,"vol":15657294.0,"pct":128.65,"origem":"interp."},{"z":85.6,"area":4.4703,"vol":16027193.0,"pct":131.69,"origem":"interp."},{"z":85.7,"area":4.6444,"vol":16416154.0,"pct":134.89,"origem":"interp."},{"z":85.8,"area":4.8126,"vol":16830338.0,"pct":138.29,"origem":"interp."},{"z":85.9,"area":4.972,"vol":17275900.0,"pct":141.95,"origem":"interp."},{"z":86.0,"area":5.12,"vol":17759000.0,"pct":145.92,"origem":"ficha"},{"z":86.1,"area":5.2604,"vol":18283487.0,"pct":150.23,"origem":"interp."},{"z":86.2,"area":5.399,"vol":18846995.0,"pct":154.86,"origem":"interp."},{"z":86.3,"area":5.5358,"vol":19446362.0,"pct":159.79,"origem":"interp."},{"z":86.4,"area":5.6712,"vol":20078422.0,"pct":164.98,"origem":"interp."},{"z":86.5,"area":5.8052,"vol":20740012.0,"pct":170.42,"origem":"interp."},{"z":86.6,"area":5.938,"vol":21427969.0,"pct":176.07,"origem":"interp."},{"z":86.7,"area":6.0696,"vol":22139128.0,"pct":181.92,"origem":"interp."},{"z":86.8,"area":6.2004,"vol":22870325.0,"pct":187.92,"origem":"interp."},{"z":86.9,"area":6.3303,"vol":23618396.0,"pct":194.07,"origem":"interp."},{"z":87.0,"area":6.4596,"vol":24380178.0,"pct":200.33,"origem":"interp."},{"z":87.1,"area":6.5884,"vol":25152506.0,"pct":206.68,"origem":"interp."},{"z":87.2,"area":6.7169,"vol":25932216.0,"pct":213.08,"origem":"interp."},{"z":87.3,"area":6.8452,"vol":26716146.0,"pct":219.52,"origem":"interp."},{"z":87.4,"area":6.9734,"vol":27501130.0,"pct":225.97,"origem":"interp."},{"z":87.5,"area":7.1017,"vol":28284004.0,"pct":232.41,"origem":"interp."},{"z":87.6,"area":7.2303,"vol":29061605.0,"pct":238.8,"origem":"interp."},{"z":87.7,"area":7.3593,"vol":29830770.0,"pct":245.12,"origem":"interp."},{"z":87.8,"area":7.4888,"vol":30588333.0,"pct":251.34,"origem":"interp."},{"z":87.9,"area":7.619,"vol":31331131.0,"pct":257.45,"origem":"interp."},{"z":88.0,"area":7.75,"vol":32056000.0,"pct":263.4,"origem":"ficha"},{"z":88.1,"area":7.9368,"vol":32853999.0,"pct":269.96,"origem":"extrap."},{"z":88.2,"area":8.1266,"vol":33665587.0,"pct":276.63,"origem":"extrap."},{"z":88.3,"area":8.3194,"vol":34490890.0,"pct":283.41,"origem":"extrap."},{"z":88.4,"area":8.5154,"vol":35330034.0,"pct":290.3,"origem":"extrap."},{"z":88.5,"area":8.7145,"vol":36183146.0,"pct":297.31,"origem":"extrap."},{"z":88.6,"area":8.9167,"vol":37050352.0,"pct":304.44,"origem":"extrap."},{"z":88.7,"area":9.122,"vol":37931780.0,"pct":311.68,"origem":"extrap."},{"z":88.8,"area":9.3306,"vol":38827556.0,"pct":319.04,"origem":"extrap."},{"z":88.9,"area":9.5423,"vol":39737808.0,"pct":326.52,"origem":"extrap."},{"z":89.0,"area":9.7573,"vol":40662663.0,"pct":334.12,"origem":"extrap."},{"z":89.1,"area":9.9756,"vol":41602250.0,"pct":341.84,"origem":"extrap."}];
+const siphons = [{"id":"boa","name":"Boa Vista","dist":32.93,"segment":32.93,"length":2065.95,"dynamic":2.21,"critical":4,"hammer":[88.74,40.64,21.88,14.11,10.33,8.21,6.9,6.03,5.41,4.95,3.75,3.39],"pom_length":2112,"ocm":"T2 32,920","ds":"DS-04 32,740","vent":"VT1 34,040"},{"id":"mao","name":"Mão Ruiva","dist":37.37,"segment":4.44,"length":1123.08,"dynamic":2.24,"critical":2,"hammer":[44.43,14.56,7.69,5.2,4.0,3.32,2.89,2.59,2.38,2.22,1.79,1.68],"pom_length":1172,"ocm":"T2 37,361","ds":"DS-05 37,280","vent":"não indicada no quadro de obras"},{"id":"mel","name":"Melancias","dist":39.55,"segment":2.18,"length":1160.86,"dynamic":2.17,"critical":2,"hammer":[46.89,15.5,8.16,5.49,4.21,3.48,3.02,2.71,2.48,2.31,1.85,1.74],"pom_length":1201,"ocm":"T2 39,540","ds":"DS-06 39,300","vent":"não indicada no quadro de obras"},{"id":"pir","name":"Pirangi","dist":68.51,"segment":28.96,"length":566.81,"dynamic":1.8,"critical":1,"hammer":[14.76,4.67,2.7,1.97,1.6,1.38,1.24,1.14,1.07,1.01,0.85,0.82],"pom_length":1050,"ocm":"T3 22,085","ds":"DS-04 22,000","vent":"VT1 indicada; km não tabulado"},{"id":"ser","name":"Serrote","dist":75.58,"segment":7.07,"length":1826.74,"dynamic":1.81,"critical":3,"hammer":[80.12,33.61,17.77,11.52,8.52,6.84,5.8,5.1,4.6,4.23,3.26,2.98],"pom_length":2485,"ocm":"T3 29,130","ds":"DS-05 29,050","vent":"VT1 indicada; km não tabulado"},{"id":"jua","name":"Juazeirinho","dist":81.61,"segment":6.03,"length":860.53,"dynamic":1.82,"critical":1,"hammer":[29.69,9.23,5.01,3.48,2.73,2.31,2.03,1.84,1.7,1.6,1.31,1.25],"pom_length":1415,"ocm":"T3 35,035","ds":"DS-06 34,950","vent":"VT1 indicada; km não tabulado"}];
+const travel2 = {"Boa Vista": {"wave_h": 3.225237000640852, "mass_h": 16.77513652556991}, "Mão Ruiva": {"wave_h": 3.6601004164575963, "mass_h": 19.036952686320905}, "Melancias": {"wave_h": 3.873614435935187, "mass_h": 20.147484044527477}, "Pirangi": {"wave_h": 6.710020859820977, "mass_h": 34.90023089483129}, "Serrote": {"wave_h": 7.4024722899616044, "mass_h": 38.501816538189296}, "Juazeirinho": {"wave_h": 7.993063820901912, "mass_h": 41.57360740515518}};
+const travel3 = {"Boa Vista": {"wave_h": 2.8943065517564435, "mass_h": 14.717056889172929}, "Mão Ruiva": {"wave_h": 3.284550131768549, "mass_h": 16.701379166364784}, "Melancias": {"wave_h": 3.476156213846564, "mass_h": 17.675663527688712}, "Pirangi": {"wave_h": 6.021528753745337, "mass_h": 30.618450272615775}, "Serrote": {"wave_h": 6.642930130025873, "mass_h": 33.77817065544154}, "Juazeirinho": {"wave_h": 7.1729231001774485, "mass_h": 36.47309482919535}};
+const svgLines = [{"cls": "linha", "pts": "989.7,489.4 994.6,481.7 994.6,481.6 994.6,481.6 994.6,481.5 994.6,481.5 994.5,481.4 994.5,481.4 994.4,481.3 994.3,481.3 994.2,481.2 994.1,481.2 993.9,481.1 993.8,481.1 993.6,481.1 993.4,481.0 993.2,481.0 993.0,480.9 992.7,480.9 992.5,480.9 992.2,480.8 991.9,480.8 991.7,480.7 991.3,480.7 991.0,480.7 990.7,480.6 990.4,480.6 990.0,480.6 989.6,480.5 989.3,480.5 988.9,480.5 988.5,480.5 988.1,480.4 987.7,480.4 987.2,480.4 969.2,479.5 968.8,479.5 968.4,479.4 968.0,479.4 967.6,479.4 967.2,479.4 966.9,479.3 966.5,479.3 966.2,479.3 965.8,479.2 965.5,479.2 965.2,479.2 964.9,479.1 964.6,479.1 964.3,479.1 964.0,479.0 963.8,479.0 963.6,479.0 963.3,478.9 963.1,478.9 952.6,476.7 952.4,476.7 952.3,476.6 952.1,476.6 952.0,476.5 951.8,476.5 951.7,476.5 951.6,476.4 951.5,476.4 951.4,476.3 951.4,476.3 951.4,476.2 951.3,476.2 951.3,476.1 951.4,476.1 951.4,476.0 951.4,476.0 951.5,476.0 951.6,475.9 951.7,475.9 966.1,469.5 966.2,469.5 966.3,469.5 968.3,468.8"}, {"cls": "linha", "pts": "1008.7,418.7 1004.5,416.9 999.3,414.7 999.2,414.6 999.0,414.5 998.7,414.5 998.4,414.4 998.2,414.3 997.8,414.2 997.5,414.2 997.1,414.1 996.7,414.0 996.3,414.0 995.9,413.9 995.4,413.8 994.9,413.8 994.4,413.7 993.9,413.7 993.3,413.6 992.7,413.6 992.2,413.5 991.5,413.5 990.9,413.4 990.3,413.4 989.6,413.3 988.9,413.3 988.3,413.2 987.5,413.2 986.8,413.2 986.1,413.1 985.4,413.1 984.6,413.1 983.8,413.0 983.1,413.0 897.1,410.6 896.7,410.6 896.2,410.6 895.8,410.6 895.3,410.6 894.9,410.5 894.5,410.5 894.0,410.5 893.6,410.5 893.2,410.4 892.8,410.4 892.5,410.4 892.1,410.4 891.7,410.3 891.4,410.3 891.0,410.3 890.7,410.2 890.4,410.2 890.1,410.2 889.8,410.1 889.5,410.1 889.3,410.0 889.0,410.0 888.8,410.0 888.6,409.9 888.4,409.9 888.2,409.8 888.0,409.8 887.9,409.8 887.7,409.7 887.6,409.7 887.5,409.6 887.4,409.6 887.3,409.5 887.3,409.5 887.2,409.4 887.2,409.4 887.2,409.3 887.4,404.3 887.8,392.5 887.8,392.4 887.8,392.4 887.9,392.3 887.9,392.3 888.0,392.2 888.1,392.2 888.2,392.1 888.3,392.1 888.4,392.1 888.6,392.0 888.7,392.0 895.9,390.2"}, {"cls": "linha", "pts": "1013.0,455.6 1013.1,455.6 1023.8,452.7 1023.9,452.7 1024.1,452.6 1024.2,452.6 1024.3,452.6 1024.4,452.5 1024.5,452.5 1043.0,440.4"}, {"cls": "linha", "pts": "1048.5,432.8 1048.5,432.8 1048.4,432.3 1048.3,432.2 1048.3,432.2 1048.3,432.1 1048.2,432.1 1048.1,432.1 1048.0,432.0 1047.9,432.0 1047.8,431.9 1047.7,431.9 1047.5,431.8 1047.3,431.8 1029.8,427.7 1029.7,427.6 1029.5,427.6 1029.4,427.5 1029.2,427.5 1029.1,427.5 1026.6,426.3 1026.5,426.3"}, {"cls": "linha", "pts": "754.8,649.1 757.4,649.1 757.9,649.1 758.3,649.1 758.8,649.1 759.3,649.1 759.7,649.1 760.2,649.1 760.6,649.1 761.1,649.1 761.5,649.1 762.0,649.1 762.4,649.2 762.8,649.2 763.3,649.2 763.7,649.2 764.1,649.2 764.5,649.3 764.9,649.3 765.3,649.3 765.7,649.3 766.1,649.4 766.4,649.4 770.0,649.7 770.4,649.7 770.7,649.7 771.1,649.8 771.5,649.8 771.9,649.8 772.3,649.8 772.8,649.9 773.2,649.9 773.6,649.9 774.1,649.9 774.5,649.9 775.0,649.9 775.5,650.0 775.9,650.0 776.4,650.0 776.9,650.0 777.3,650.0 777.8,650.0 778.3,650.0 778.8,650.0 779.3,650.0 779.7,650.0 780.2,650.0 780.7,650.0 781.2,650.0 781.6,650.0 782.1,650.0 782.6,650.0 783.0,649.9 783.5,649.9 783.9,649.9 802.5,649.2 803.1,649.2 803.8,649.2 804.4,649.1 805.1,649.1 805.7,649.1 806.4,649.1 825.7,648.8 826.4,648.8 827.1,648.8 827.8,648.7 828.4,648.7 829.1,648.7 829.8,648.7 830.5,648.7 831.2,648.7 831.9,648.8 832.6,648.8 833.3,648.8 833.9,648.8 834.6,648.8 841.3,649.0 841.7,649.0 842.0,649.0 842.4,649.0 842.7,649.0 843.1,649.0 843.5,649.0 843.8,649.0 844.2,649.0 844.5,649.0 844.9,649.0 845.2,649.0 845.6,649.0 846.0,649.0 846.3,649.0 846.6,649.0 847.0,649.0 847.3,649.0 847.7,648.9 848.0,648.9 848.3,648.9 848.6,648.9 849.0,648.9 849.3,648.9 849.6,648.9 849.9,648.8 850.2,648.8 850.5,648.8 850.7,648.8 851.0,648.7 851.3,648.7 851.5,648.7 851.7,648.7 852.0,648.6 852.2,648.6 852.4,648.6 852.6,648.6 854.0,648.4 854.2,648.3 854.4,648.3 854.5,648.3 854.7,648.2 854.8,648.2 855.0,648.2 855.1,648.1 855.2,648.1 855.3,648.1 855.4,648.0 855.5,648.0 855.5,648.0 855.6,647.9 855.6,647.9 855.7,647.9 855.7,647.8 855.7,647.8 855.7,647.8 855.6,647.7 855.6,647.7 855.6,647.7 855.5,647.6 855.4,647.6 855.4,647.6 855.3,647.5 855.1,647.5 855.0,647.5 854.9,647.4 854.8,647.4 854.6,647.4 854.4,647.3 854.3,647.3 854.1,647.3 853.9,647.3 853.7,647.2 853.5,647.2 853.2,647.2 853.0,647.1 852.8,647.1 852.5,647.1 852.3,647.1 852.1,647.0 851.9,647.0 851.7,647.0 851.5,647.0 851.3,646.9 851.2,646.9 851.0,646.9 850.9,646.8 850.7,646.8 850.6,646.8 850.5,646.7 850.4,646.7 850.3,646.7 850.3,646.6 850.2,646.6 850.2,646.6 850.1,646.5 850.1,646.5 850.1,646.5 850.1,646.4 850.1,646.4 850.1,646.4 853.4,642.8 853.4,642.8 853.5,642.8 853.5,642.7 853.6,642.7 853.7,642.7 853.8,642.6 853.9,642.6 854.0,642.6 854.1,642.5 854.3,642.5 854.4,642.5 854.6,642.5 854.8,642.4 855.0,642.4 855.2,642.4 855.4,642.3 855.6,642.3 855.9,642.3 856.1,642.3 856.4,642.2 856.6,642.2 856.9,642.2 857.2,642.2 857.4,642.1 857.7,642.1 858.0,642.1 858.3,642.1 858.6,642.1 859.0,642.0 859.3,642.0 859.6,642.0 860.0,642.0 860.3,642.0 860.6,642.0 861.0,642.0 888.3,641.3 888.7,641.3 889.0,641.3 889.3,641.2 889.6,641.2 889.9,641.2 890.2,641.2 890.5,641.2 890.8,641.2 891.1,641.2 891.4,641.1 891.6,641.1 920.6,639.2 921.1,639.1 921.7,639.1 922.2,639.1 922.8,639.0 923.4,639.0 923.9,639.0 964.7,637.2 965.1,637.2 965.5,637.1 966.0,637.1 966.4,637.1 966.8,637.1 967.2,637.0 967.5,637.0 967.9,637.0 968.3,636.9 968.6,636.9 968.9,636.9 969.3,636.9 969.6,636.8 969.9,636.8 970.2,636.7 970.4,636.7 970.7,636.7 970.9,636.6 971.2,636.6 971.4,636.5 971.6,636.5 971.8,636.5 971.9,636.4 972.1,636.4 985.4,632.4 985.5,632.3 985.7,632.3 985.8,632.2 985.9,632.2 985.9,632.1 986.0,632.1 986.0,632.0 986.1,632.0 986.1,632.0 986.1,631.9 986.0,631.9 986.0,631.8 985.9,631.8 985.9,631.7 985.8,631.7 980.0,628.9 979.9,628.8 979.8,628.8 979.7,628.7 979.7,628.7 979.7,628.6 979.7,628.6 979.7,628.5 979.7,628.5 979.8,628.4 979.8,628.4 979.9,628.3 980.0,628.3 980.1,628.3 980.3,628.2 980.4,628.2 980.6,628.1 980.7,628.1 980.9,628.0 981.1,628.0 981.4,628.0 981.6,627.9 981.8,627.9 982.1,627.8 982.4,627.8 982.7,627.8 983.0,627.7 983.3,627.7 1026.1,623.2 1026.4,623.2 1026.7,623.1 1027.0,623.1 1027.3,623.0 1027.6,623.0 1027.8,623.0 1028.1,622.9 1028.3,622.9 1028.5,622.8 1028.7,622.8 1028.9,622.8 1029.0,622.7 1029.2,622.7 1029.3,622.6 1029.4,622.6 1029.5,622.5 1029.6,622.5 1029.6,622.4 1029.7,622.4 1031.3,620.5 1031.3,620.5 1031.4,620.4 1031.5,620.4 1031.6,620.3 1031.7,620.3 1031.8,620.2 1032.0,620.2 1032.1,620.2 1032.3,620.1 1032.5,620.1 1061.1,614.0 1061.3,614.0 1061.6,613.9 1061.8,613.8 1062.0,613.8 1093.7,604.1 1093.8,604.1 1093.9,604.0 1094.0,604.0 1094.1,603.9 1094.2,603.9 1094.2,603.9 1094.3,603.8 1094.3,603.8 1094.3,603.7 1094.3,603.7 1094.3,603.6 1094.2,603.6 1094.2,603.5 1094.1,603.5 1094.0,603.5 1093.9,603.4 1093.8,603.4 1093.7,603.3 1093.5,603.3 1093.4,603.2 1093.2,603.2 1093.0,603.2 1092.8,603.1 1092.6,603.1 1072.7,599.6 1072.5,599.6 1072.3,599.5 1072.1,599.5 1071.9,599.4 1071.7,599.4 1071.6,599.4 1071.4,599.3 1071.3,599.3 1071.2,599.2 1071.1,599.2 1071.1,599.1 1071.0,599.1 1068.9,596.7 1068.9,596.7 1068.9,596.6 1068.9,596.6 1068.9,596.5 1068.9,596.5 1069.0,596.4 1069.1,596.4 1069.1,596.3 1069.2,596.3 1069.4,596.3 1069.5,596.2 1069.6,596.2 1069.8,596.1 1070.0,596.1 1070.2,596.0 1070.4,596.0 1070.6,596.0 1070.8,595.9 1071.1,595.9 1071.3,595.8 1071.6,595.8 1071.9,595.8 1072.2,595.7 1072.5,595.7 1072.8,595.7 1073.2,595.6 1073.5,595.6 1073.9,595.6 1074.3,595.5 1074.6,595.5 1075.0,595.5 1075.4,595.5 1075.8,595.4 1076.2,595.4 1076.7,595.4 1113.3,593.7 1113.7,593.7 1114.1,593.7 1114.5,593.6 1114.9,593.6 1115.3,593.6 1115.7,593.6 1116.1,593.5 1116.4,593.5 1116.8,593.5 1117.1,593.4 1117.4,593.4 1117.7,593.4 1118.0,593.3 1118.3,593.3 1118.6,593.3 1118.9,593.2 1119.1,593.2 1119.4,593.1 1119.6,593.1 1119.8,593.1 1120.0,593.0 1120.1,593.0 1120.3,592.9 1120.5,592.9 1120.6,592.9 1120.7,592.8 1120.8,592.8 1120.9,592.7 1121.0,592.7 1121.0,592.6 1124.7,589.0 1124.7,589.0 1124.7,588.9 1124.7,588.9 1124.7,588.8 1124.7,588.8 1124.7,588.7 1124.6,588.7 1124.5,588.7 1124.4,588.6 1124.3,588.6 1124.2,588.5 1124.0,588.5 1123.9,588.4 1105.0,583.5 1104.8,583.5 1104.7,583.4 1104.5,583.4 1104.4,583.3 1104.3,583.3 1104.3,583.2 1104.2,583.2 1104.2,583.2 1104.1,583.1 1104.1,583.1 1104.1,583.0 1104.1,583.0 1104.2,582.9 1104.2,582.9 1104.3,582.8 1104.4,582.8 1104.4,582.7 1104.6,582.7 1104.7,582.7 1104.8,582.6 1105.0,582.6 1105.1,582.5 1105.3,582.5 1105.5,582.5 1105.8,582.4 1106.0,582.4 1106.2,582.3 1167.9,572.9 1168.1,572.9 1168.3,572.8 1168.6,572.8 1168.8,572.7 1168.9,572.7 1169.1,572.7 1169.3,572.6 1169.4,572.6 1169.5,572.5 1169.7,572.5 1169.8,572.4 1169.8,572.4 1169.9,572.4 1169.9,572.3 1170.0,572.3 1170.0,572.2 1170.0,572.2 1170.0,572.1 1170.0,572.1 1169.9,572.0 1169.8,572.0 1149.8,559.1 1149.7,559.0 1149.7,559.0 1149.5,558.9 1149.4,558.9 1149.3,558.8 1149.1,558.8 1149.0,558.7 1148.8,558.7 1148.6,558.7 1148.4,558.6 1148.1,558.6 1147.9,558.5 1147.7,558.5 1147.4,558.5 1147.1,558.4 1146.8,558.4 1146.5,558.4 1146.2,558.3 1119.6,555.6 1119.3,555.6 1118.9,555.6 1118.6,555.5 1118.3,555.5 1117.9,555.5 1117.5,555.4 1117.2,555.4 1116.8,555.4 1116.4,555.4 1116.0,555.4 1052.9,552.1 1052.5,552.1 1052.2,552.1 1051.8,552.1 1051.4,552.1 1050.9,552.1 1008.5,550.7 1008.0,550.6 1007.6,550.6 1007.2,550.6 1006.7,550.6 1006.3,550.6 1005.9,550.5 1005.5,550.5 1005.1,550.5 1004.7,550.5 1004.3,550.4 1004.0,550.4 1003.6,550.4 1003.3,550.4 1003.0,550.3 964.1,546.4 963.8,546.3 963.5,546.3 963.2,546.3 962.9,546.2 962.6,546.2 962.4,546.2 962.1,546.1 961.9,546.1 961.7,546.0 961.5,546.0 961.3,545.9 961.1,545.9 961.0,545.9 960.8,545.8 960.7,545.8 960.6,545.7 951.4,541.3 951.3,541.2 951.2,541.2 951.2,541.2 951.1,541.1 951.1,541.1 951.1,541.0 951.1,541.0 951.1,540.9 951.2,540.9 960.7,531.4"}, {"cls": "tubular", "pts": "968.3,468.8 968.5,468.7 986.4,462.8 1013.0,455.6"}, {"cls": "tubular", "pts": "1026.5,426.3 1008.7,418.7"}, {"cls": "tubular", "pts": "1043.0,440.4 1043.1,440.3 1049.4,436.1 1048.5,432.8"}, {"cls": "tubular", "pts": "960.7,531.4 960.8,531.4 989.3,503.1 985.7,495.6 989.6,489.4 989.7,489.4"}, {"cls": "linha", "pts": "337.5,114.8 337.0,114.4 333.0,111.8 332.9,111.7 332.8,111.6 332.8,111.6 332.8,111.5 332.8,111.4 332.8,111.4 332.8,111.3 332.9,111.2 333.0,111.2 360.3,93.6 360.4,93.5 360.4,93.5 360.5,93.4 360.5,93.3 360.5,93.3 360.5,93.2 360.4,93.1 360.3,93.1 360.2,93.0 360.1,92.9 359.9,92.8 359.8,92.8 348.6,88.9 348.4,88.8 348.2,88.8 347.9,88.7 347.7,88.6 347.4,88.6 347.1,88.5 346.7,88.4 346.4,88.4 346.0,88.3 345.6,88.3 345.2,88.2 344.7,88.2 344.3,88.1 343.8,88.1 343.3,88.0 342.8,88.0 342.3,87.9 341.7,87.9 341.2,87.8 245.2,80.9 245.0,80.8 244.9,80.8 244.8,80.8 244.6,80.8 244.5,80.8 244.4,80.8 244.3,80.8 244.2,80.8 244.1,80.7 244.0,80.7 243.9,80.7 243.8,80.7 243.7,80.7 243.6,80.7 243.5,80.7 243.5,80.6 243.4,80.6 243.4,80.6 243.3,80.6 243.3,80.6 243.2,80.6 243.2,80.5 243.2,80.5 243.1,80.5 243.1,80.5 243.1,80.5 243.1,80.5 243.1,80.4 243.1,80.4 243.1,80.4 243.2,80.4 243.2,80.4 243.2,80.4 243.3,80.3 243.3,80.3 243.4,80.3 243.4,80.3 243.5,80.3 243.6,80.3 243.6,80.2 243.7,80.2 243.8,80.2 266.7,76.4 266.9,76.3 267.0,76.3 267.2,76.3 267.3,76.2 267.4,76.2 267.5,76.2 267.7,76.1 267.7,76.1 267.8,76.1 267.9,76.0 268.0,76.0 268.0,76.0 268.0,75.9 268.0,75.9 268.1,75.9 268.0,75.8 264.7,66.1 264.7,66.0 264.7,66.0 264.6,66.0 264.6,66.0 264.6,66.0 264.5,65.9 264.4,65.9 264.4,65.9 264.3,65.9 264.2,65.8 264.1,65.8 264.0,65.8 263.9,65.8 263.8,65.8 263.7,65.7 263.6,65.7 263.5,65.7 263.3,65.7 263.2,65.7 263.0,65.7 262.9,65.6 262.7,65.6 262.5,65.6 262.4,65.6 262.2,65.6 262.0,65.6 261.8,65.6 170.7,59.4 169.1,59.3 167.9,59.1 166.6,59.0 165.6,58.9 164.3,58.7 114.5,51.8 114.1,51.8 113.7,51.7 113.4,51.6 113.1,51.6 112.8,51.5 112.5,51.5 112.2,51.4 111.9,51.3 111.7,51.3 111.5,51.2 111.3,51.1 111.2,51.1 111.0,51.0 110.9,50.9 110.9,50.9 110.8,50.8 110.7,50.7 110.7,50.7 110.7,50.6 110.8,50.5 110.8,50.5 110.9,50.4 111.0,50.3 111.1,50.3 151.0,30.0"}, {"cls": "linha", "pts": "135.7,238.6 131.7,235.1 131.7,235.0 131.7,235.0 131.7,234.9 131.7,234.9 131.7,234.8 131.7,234.8 131.8,234.7 131.9,234.7 132.0,234.6 132.1,234.6 132.2,234.6 132.3,234.5 132.5,234.5 132.7,234.4 132.8,234.4 133.1,234.3 133.3,234.3 133.5,234.3 133.7,234.2 134.0,234.2 134.3,234.1 134.6,234.1 134.9,234.1 169.2,230.1 169.5,230.1 169.8,230.0 170.1,230.0 170.3,230.0 170.6,229.9 170.8,229.9 171.0,229.8 171.2,229.8 171.4,229.8 171.6,229.7 171.7,229.7 171.9,229.6 172.0,229.6 172.1,229.5 172.2,229.5 172.3,229.5 172.3,229.4 172.4,229.4 172.4,229.3 172.4,229.3 172.4,229.2 172.4,229.2 172.3,229.1 172.3,229.1 172.2,229.0 172.1,229.0 172.0,229.0 171.9,228.9 171.8,228.9 171.6,228.8 171.4,228.8 145.7,222.5 145.4,222.4 145.2,222.4 145.0,222.3 144.8,222.2 144.7,222.2 144.5,222.1 144.4,222.0 144.4,222.0 144.3,221.9 144.3,221.8 144.2,221.8 144.3,221.7 146.0,216.8 146.1,216.7 146.1,216.7 146.2,216.6 146.3,216.6 146.4,216.5 146.5,216.4 146.7,216.4 156.0,212.9"}, {"cls": "linha", "pts": "33.6,290.2 30.2,288.3 30.1,288.3 30.1,288.2 30.0,288.2 30.0,288.1 30.0,288.1 30.0,288.1 30.0,288.0 30.1,288.0 30.1,287.9 30.2,287.9 30.3,287.8 30.4,287.8 30.5,287.7 30.6,287.7 30.8,287.7 31.0,287.6 31.1,287.6 31.3,287.5 31.5,287.5 31.8,287.4 32.0,287.4 32.2,287.4 118.5,274.7 118.9,274.6 119.3,274.5 119.6,274.5 119.9,274.4 120.2,274.4 120.5,274.3 120.7,274.2 121.0,274.2 121.2,274.1 121.3,274.0 121.5,274.0 121.6,273.9 121.7,273.8 121.8,273.8 121.9,273.7 121.9,273.6 121.9,273.6 121.9,273.5 121.8,273.4 121.8,273.3 121.7,273.3 115.0,269.0 114.9,269.0 114.8,268.9 114.8,268.8 114.7,268.8 114.8,268.7 114.8,268.6 114.8,268.5 114.9,268.5 115.0,268.4 115.1,268.3 115.3,268.3 115.5,268.2 115.7,268.1 115.9,268.1 116.1,268.0 116.4,267.9 116.7,267.9 117.0,267.8 117.4,267.8 117.7,267.7 118.1,267.6 127.8,266.2 128.1,266.2 128.5,266.1 128.8,266.0 129.1,266.0 129.4,265.9 129.7,265.8 129.9,265.8 130.1,265.7 130.3,265.7 130.5,265.6 130.7,265.5 130.8,265.5 130.9,265.4 131.0,265.3 135.4,261.1 135.5,261.0 135.6,260.9 135.7,260.9 135.8,260.8 136.0,260.7 136.2,260.7 136.4,260.6 136.7,260.5 136.9,260.5 137.2,260.4 153.3,257.1 153.6,257.0 153.8,257.0 154.1,256.9 154.3,256.8 154.5,256.8 154.7,256.7 154.8,256.6 154.9,256.6 155.0,256.5 155.1,256.4 155.2,256.4 155.2,256.3 155.2,256.2 155.2,256.2 155.1,256.1 155.1,256.0 152.1,253.3 149.2,250.8"}, {"cls": "linha", "pts": "895.9,390.2 896.9,389.8 897.2,389.8 897.4,389.7 897.6,389.7 897.8,389.6 897.9,389.5 898.1,389.5 898.2,389.4 898.3,389.3 898.3,389.2 898.3,389.2 898.4,389.1 898.3,389.0 898.3,389.0 893.8,383.4 893.8,383.4 893.8,383.3 893.8,383.2 893.8,383.2 893.8,383.1 893.9,383.0 894.0,383.0 894.1,382.9 894.2,382.9 894.4,382.8 894.5,382.7 907.8,378.2 908.0,378.1 908.2,378.1 908.3,378.0 908.4,377.9 908.5,377.9 908.6,377.8 908.6,377.7 908.6,377.7 908.6,377.6 908.6,377.5 908.5,377.5 908.5,377.4 908.4,377.3 908.2,377.3 908.1,377.2 907.9,377.1 895.7,372.8 895.5,372.7 895.3,372.6 895.0,372.6 894.8,372.5 894.5,372.4 894.2,372.4 893.8,372.3 893.5,372.3 893.1,372.2 892.7,372.1 857.7,367.3 857.4,367.3 857.1,367.3 856.7,367.2 856.4,367.1 856.2,367.1 834.6,362.9 834.3,362.9 834.0,362.8 833.7,362.7 833.5,362.7 833.3,362.6 833.1,362.6 832.9,362.5 832.8,362.4 832.6,362.4 832.5,362.3 832.5,362.2 832.4,362.2 832.4,362.1 832.4,362.0 832.4,361.9 836.8,353.1 836.9,353.0 836.8,352.9 836.8,352.9 836.8,352.8 836.7,352.7 836.6,352.6 836.5,352.6 836.3,352.5 836.1,352.4 835.9,352.4 835.7,352.3 835.5,352.2 835.2,352.2 834.9,352.1 834.6,352.1 834.2,352.0 833.9,351.9 833.5,351.9 833.1,351.8 832.7,351.8 832.2,351.7 831.8,351.7 831.3,351.6 830.8,351.6 830.3,351.5 829.7,351.5 829.2,351.4 828.6,351.4 828.0,351.3 827.4,351.3 826.8,351.3 826.2,351.2 825.6,351.2 817.7,350.8 817.1,350.8 816.5,350.7 815.9,350.7 815.3,350.7 814.7,350.6 814.1,350.6 813.6,350.5 813.0,350.5 812.5,350.4 812.0,350.4 811.6,350.3 811.1,350.3 810.7,350.2 810.2,350.2 809.8,350.1 809.4,350.1 809.1,350.0 808.7,350.0 792.4,346.9 792.1,346.8 791.8,346.8 791.6,346.7 791.3,346.7 791.1,346.6 790.9,346.6 790.7,346.5 790.6,346.4 782.9,343.2 782.8,343.1 782.6,343.0 782.4,343.0 782.2,342.9 781.9,342.9 781.7,342.8 781.4,342.7 781.1,342.7 780.7,342.6 780.4,342.6 780.0,342.5 779.7,342.5 779.3,342.4 778.8,342.4 772.1,341.5 771.6,341.5 771.2,341.4 770.8,341.4 770.5,341.3 770.1,341.3 769.8,341.2 769.5,341.2 769.2,341.1 768.9,341.0 768.7,341.0 768.5,340.9 768.3,340.8 768.1,340.8 767.9,340.7 761.2,337.7 761.1,337.6 760.9,337.6 760.7,337.5 760.4,337.4 760.2,337.4 759.9,337.3 759.6,337.3 759.3,337.2 759.0,337.1 758.6,337.1 758.2,337.0 757.8,337.0 721.4,332.1 721.0,332.0 720.7,332.0 720.3,331.9 720.0,331.8 719.7,331.8 719.4,331.7 719.1,331.7 718.8,331.6 718.6,331.5 718.4,331.5 718.2,331.4 718.1,331.3 717.9,331.3 717.8,331.2 717.7,331.1 717.6,331.1 717.6,331.0 717.6,330.9 717.6,330.9 717.6,330.8 718.7,328.6 718.7,328.5 718.7,328.4 718.7,328.4 718.7,328.3 718.6,328.2 718.5,328.2 718.4,328.1 718.2,328.0 718.0,328.0 717.8,327.9 717.6,327.8 717.4,327.8 717.1,327.7 716.8,327.6 716.5,327.6 716.2,327.5 715.8,327.5 715.5,327.4 715.1,327.3 714.7,327.3 714.2,327.2 713.8,327.2 713.3,327.1 712.8,327.1 712.3,327.0 711.8,327.0 711.2,326.9 710.7,326.9 710.1,326.9 709.5,326.8 708.9,326.8 708.3,326.7 707.7,326.7 707.0,326.7 706.4,326.6 705.8,326.6 705.1,326.6 704.4,326.6 703.7,326.6 703.0,326.5 702.4,326.5 701.7,326.5 701.0,326.5 700.3,326.5 699.5,326.5 698.8,326.5 583.6,326.1 582.9,326.1 582.2,326.1 581.5,326.1 580.8,326.1 580.1,326.1 579.4,326.1 578.7,326.0 578.1,326.0 577.4,326.0 576.7,326.0 576.1,326.0 575.5,325.9 574.8,325.9 574.2,325.9 573.6,325.8 573.0,325.8 548.3,324.2 547.7,324.2 547.2,324.2 546.6,324.1 546.0,324.1 545.5,324.0 545.0,324.0 544.5,323.9 544.0,323.9 543.6,323.8 543.1,323.8 542.7,323.7 542.3,323.7 541.9,323.6 541.6,323.5 541.2,323.5 540.9,323.4 540.6,323.4 525.8,320.0 525.6,319.9 525.2,319.9 524.9,319.8 524.6,319.7 524.2,319.7 523.8,319.6 523.4,319.6 522.9,319.5 522.5,319.5 522.0,319.4 521.5,319.4 521.0,319.3 520.5,319.3 520.0,319.2 427.3,311.9 426.7,311.8 426.1,311.8 425.5,311.7 424.9,311.7 424.3,311.7 423.7,311.6 423.0,311.6 422.4,311.6 421.7,311.6 421.0,311.5 420.3,311.5 419.7,311.5 419.0,311.5 418.2,311.5 417.5,311.4 416.8,311.4 416.1,311.4 415.4,311.4 414.7,311.4 414.0,311.4 361.1,311.5 360.4,311.5 359.7,311.5 359.0,311.5 358.3,311.5 357.7,311.5 357.0,311.4 356.3,311.4 355.7,311.4 174.6,306.9 173.9,306.9 173.2,306.9 172.5,306.8 171.9,306.8 171.2,306.8 170.6,306.8 169.9,306.7 60.7,301.0 60.1,300.9 59.4,300.9 58.9,300.9 58.3,300.8 57.7,300.8 57.2,300.7 56.6,300.7 56.1,300.7 55.6,300.6 55.1,300.6 54.7,300.5 54.2,300.4 53.8,300.4 53.4,300.3 53.0,300.3 52.6,300.2 52.3,300.2 52.0,300.1 51.7,300.0 51.4,300.0 51.1,299.9 50.9,299.8 50.7,299.8 50.5,299.7 50.4,299.6 50.2,299.6 40.4,294.1"}, {"cls": "linha", "pts": "171.2,207.2 180.8,203.7 180.9,203.6 181.1,203.6 181.2,203.5 181.3,203.4 181.3,203.4 181.4,203.3 181.4,203.3 182.8,199.7 182.9,199.6 182.9,199.6 183.0,199.5 183.1,199.4 183.3,199.4 183.4,199.3 183.6,199.3 183.8,199.2 184.0,199.1 184.3,199.1 184.5,199.0 222.3,190.6 222.6,190.5 222.9,190.5 223.3,190.4 223.6,190.3 224.0,190.3 224.4,190.2 224.8,190.2 225.2,190.1 225.6,190.1 226.1,190.0 293.3,183.0 293.6,182.9 293.9,182.9 294.2,182.9 294.5,182.8 294.7,182.8 295.0,182.7 295.2,182.7 295.4,182.7 295.6,182.6 295.8,182.6 296.0,182.5 325.1,175.4 325.4,175.3 325.6,175.3 325.8,175.2 326.0,175.1 326.2,175.1 326.3,175.0 326.4,174.9 326.5,174.9 326.5,174.8 326.6,174.7 326.6,174.7 326.6,174.6 326.5,174.5 326.5,174.5 326.4,174.4 326.2,174.3 326.1,174.2 325.9,174.2 325.7,174.1 325.5,174.0 325.3,174.0 325.0,173.9 324.8,173.9 324.5,173.8 324.1,173.7 323.8,173.7 323.4,173.6 323.0,173.6 322.6,173.5 322.2,173.4 321.7,173.4 284.7,169.2 284.2,169.1 283.8,169.1 283.4,169.0 283.0,168.9 282.6,168.9 282.3,168.8 281.9,168.8 281.6,168.7 281.4,168.6 281.1,168.6 280.9,168.5 280.6,168.4 280.5,168.4 280.3,168.3 280.1,168.2 280.0,168.2 279.9,168.1 279.9,168.0 279.8,168.0 279.8,167.9 279.8,167.8 279.8,167.8 279.9,167.7 279.9,167.6 280.0,167.6 280.2,167.5 280.3,167.4 280.5,167.4 280.7,167.3 280.9,167.2 281.1,167.2 281.4,167.1 281.7,167.0 282.0,167.0 331.8,157.4 332.1,157.4 332.4,157.3 332.7,157.3 332.9,157.2 333.1,157.1 333.3,157.1 333.5,157.0 333.7,156.9 333.8,156.9 333.9,156.8 334.0,156.7 334.0,156.7 334.0,156.6 334.0,156.5 334.0,156.4 334.0,156.4 333.9,156.3 333.8,156.2 293.2,130.7 293.1,130.6 293.0,130.6 293.0,130.5 292.9,130.4 292.9,130.4 292.9,130.3 293.0,130.3 293.0,130.2 293.1,130.1 306.5,120.5 307.3,120.3 308.5,120.1 311.1,119.9 314.3,119.6 335.2,118.2 336.8,118.1 338.6,117.8 339.8,117.5 340.3,117.2"}, {"cls": "tubular", "pts": "156.0,212.9 157.5,212.3 170.9,207.3 171.2,207.2"}, {"cls": "tubular", "pts": "340.3,117.2 340.4,117.2 337.5,114.8"}, {"cls": "tubular", "pts": "40.4,294.1 40.4,294.1 34.2,290.6 33.6,290.2"}, {"cls": "tubular", "pts": "149.2,250.8 147.9,249.5 136.1,239.0 135.7,238.6"}];
+const svgPoints = [{"cls": "origem", "name": "Açude Curral Velho — origem operacional de referência", "x": 754.7888790962513, "y": 649.0635507132203}, {"cls": "sifao_alvo", "name": "Boa Vista", "x": 986.4577302990562, "y": 462.721348990876}, {"cls": "sifao_alvo", "name": "Mão Ruiva", "x": 1045.0168498964936, "y": 436.69461095182277}, {"cls": "sifao_alvo", "name": "Melancia", "x": 1014.9757999641877, "y": 422.389664410527}, {"cls": "sifao_alvo", "name": "Pirangi", "x": 36.64323696393455, "y": 291.98687361488516}, {"cls": "sifao_alvo", "name": "Serrote", "x": 142.2847871622184, "y": 244.95187247744158}, {"cls": "sifao_alvo", "name": "Juazeirinho", "x": 163.8890313276224, "y": 209.8392322783483}, {"cls": "sifao_intermediario", "name": "Palhano", "x": 977.6107794614562, "y": 510.60732818628964}];
+const knownTimes = [1,2,3,4,5,6,7,8,9,10,15,16];
+const $ = id => document.getElementById(id);
+const fmt = (n,d=2)=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pipeArea = Math.PI*2.5*2.5/4;
+let programStages=[];
+const colors = ['#005a8d','#18b2cf','#238b61','#f0c24b','#8b6bb0','#d66c42'];
+const kmzNodes = [
+  {id:'castanhao',name:'EB / Açude Castanhão',lat:-5.483861698544101,lon:-38.44737335532393,type:'origin',km:null},
+  {id:'curral',name:'Açude Curral Velho',lat:-5.079210,lon:-38.305078,type:'origin',km:0},
+  {id:'palhano',name:'Sifão Palhano',lat:-4.890254703768302,lon:-38.27580389327939,type:'intermediate',km:23.15,length:6370},
+  {id:'boa',name:'Boa Vista',lat:-4.824903293632478,lon:-38.274641590190924,type:'sifao',km:32.93,length:2065.95,entry:[-4.8331767893,-38.2770224954],exit:[-4.8152335315,-38.2711543572]},
+  {id:'mao',name:'Mão Ruiva',lat:-4.789383835522479,lon:-38.26694815469939,type:'sifao',km:37.37,length:1123.08,entry:[-4.7943925769,-38.2672170968],exit:[-4.7840721227,-38.2664906003]},
+  {id:'mel',name:'Melancias',lat:-4.769861452476362,lon:-38.270894916217344,type:'sifao',km:39.55,length:1160.86,entry:[-4.7752528206,-38.2693751636],exit:[-4.764824479394266,-38.27171793332532]},
+  {id:'pir',name:'Pirangi',lat:-4.591896912389058,lon:-38.399427218520565,type:'sifao',km:68.51,length:566.81,entry:[-4.5947161491,-38.398933803],exit:[-4.589490015,-38.3998293416]},
+  {id:'ser',name:'Serrote',lat:-4.527706857142857,lon:-38.38554814285715,type:'sifao',km:75.58,length:1826.74,entry:[-4.5356422004,-38.384635419],exit:[-4.5190170616,-38.3864180758]},
+  {id:'jua',name:'Juazeirinho',lat:-4.4797876,lon:-38.3827098,type:'sifao',km:81.61,length:860.53,entry:[-4.4839684484,-38.3837435753],exit:[-4.4762271062,-38.3817441706]}
+];
+const hydraulicPath = [
+  [-5.483861698544101,-38.44737335532393],
+  [-5.079210,-38.305078],
+  [-4.9186712397,-38.2780232372],[-4.8612719416,-38.2742209604],
+  [-4.8331767893,-38.2770224954],[-4.8152335315,-38.2711543572],
+  [-4.7943925769,-38.2672170968],[-4.7840721227,-38.2664906003],
+  [-4.7752528206,-38.2693751636],[-4.764824479394266,-38.27171793332532],
+  [-4.5947161491,-38.398933803],[-4.589490015,-38.3998293416],
+  [-4.5356422004,-38.384635419],[-4.5190170616,-38.3864180758],
+  [-4.4839684484,-38.3837435753],[-4.4762271062,-38.3817441706]
+];
+let leafletMap=null, systemPolyline=null, testBounds=null, fullBounds=null;
+function mkIcon(type){
+  return L.divIcon({className:'kmz-marker',html:`<div class="kmz-dot ${type}"></div>`,iconSize:[18,18],iconAnchor:[9,9]});
+}
+function popupHtml(n){
+  let h=`<div style="min-width:190px"><b style="color:#005a8d">${n.name}</b>`;
+  if(n.km!==null && n.km!==undefined) h+=`<br>Km operacional: <b>${fmt(n.km)} km</b>`;
+  if(n.length) h+=`<br>Comprimento aprox.: <b>${fmt(n.length,0)} m</b>`;
+  if(n.type==='sifao'){
+    const s=siphons.find(x=>x.id===n.id);
+    if(s){h+=`<br>Onda (Q0=2): ${fmt(travel2[s.name].wave_h)} h · massa: ${fmt(travel2[s.name].mass_h)} h`;
+          h+=`<br>Onda (Q0=3): ${fmt(travel3[s.name].wave_h)} h · massa: ${fmt(travel3[s.name].mass_h)} h`;
+          const a4=arrivalFor(4)[s.name]; h+=`<br>Onda (Q0=4, extrap.): ${fmt(a4.wave_h)} h · massa: ${fmt(a4.mass_h)} h`;}
+  }
+  return h+'</div>';
+}
+function initLeafletMap(){
+  if(typeof L==='undefined'){ $('map').style.display='none'; $('mapFallback').classList.add('show'); return; }
+  const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
+  const streets=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
+  const topo=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'});
+  const Offline=L.GridLayer.extend({createTile:function(coords){const tile=L.DomUtil.create('canvas','leaflet-tile');const size=this.getTileSize();tile.width=size.x;tile.height=size.y;const c=tile.getContext('2d');c.fillStyle='#eef5f8';c.fillRect(0,0,size.x,size.y);c.strokeStyle='#c8d8e2';c.lineWidth=1;for(let i=0;i<=size.x;i+=32){c.beginPath();c.moveTo(i,0);c.lineTo(i,size.y);c.stroke();}for(let j=0;j<=size.y;j+=32){c.beginPath();c.moveTo(0,j);c.lineTo(size.x,j);c.stroke();}return tile;}});
+  const offline=new Offline({attribution:'Esquemático offline'});
+  leafletMap=L.map('map',{layers:[sat],zoomControl:true,preferCanvas:true});
+  L.control.layers({'Satélite Esri':sat,'Ruas Esri':streets,'Topo Esri':topo,'Esquemático offline':offline},null,{collapsed:false}).addTo(leafletMap);
+  systemPolyline=L.polyline(hydraulicPath,{color:'#37c2d4',weight:5,opacity:.95}).addTo(leafletMap).bindPopup('Eixo hidráulico simplificado extraído de nós do SISTEMA geral.kmz.');
+  kmzNodes.forEach(n=>{
+    const marker=L.marker([n.lat,n.lon],{icon:mkIcon(n.type)}).addTo(leafletMap).bindPopup(popupHtml(n));
+    marker.bindTooltip(n.name,{permanent:true,direction:'right',offset:[10,0],className:'kmz-label'});
+    if(n.entry&&n.exit){
+      L.circleMarker(n.entry,{radius:5,color:'#fff',weight:2,fillColor:'#25b9c6',fillOpacity:1}).addTo(leafletMap).bindTooltip(n.name+' · entrada');
+      L.circleMarker(n.exit,{radius:5,color:'#fff',weight:2,fillColor:'#25b9c6',fillOpacity:1}).addTo(leafletMap).bindTooltip(n.name+' · saída');
+      L.polyline([n.entry,n.exit],{color:'#f0c24b',weight:7,opacity:.95}).addTo(leafletMap);
+    }
+  });
+  fullBounds=L.latLngBounds(hydraulicPath);
+  testBounds=L.latLngBounds(hydraulicPath.slice(1));
+  leafletMap.fitBounds(fullBounds.pad(.05));
+  $('fitMapBtn').addEventListener('click',()=>leafletMap.fitBounds(fullBounds.pad(.05)));
+  $('focusTestBtn').addEventListener('click',()=>leafletMap.fitBounds(testBounds.pad(.05)));
+}
+
+function interp(arr,t){if(t<=1)return arr[0];for(let i=0;i<knownTimes.length-1;i++){const a=knownTimes[i],b=knownTimes[i+1];if(t>=a&&t<=b){const r=(t-a)/(b-a);return arr[i]+r*(arr[i+1]-arr[i]);}}return arr[arr.length-1]*16/t;}
+function solveChannel(Q){const b=5,z=1.5,n=1/70,S=0.00015; function calc(y){const A=b*y+z*y*y,P=b+2*y*Math.sqrt(1+z*z),R=A/P,T=b+2*z*y; return {A,P,R,T,Q:(1/n)*A*Math.pow(R,2/3)*Math.sqrt(S)};} let lo=.001, hi=3.5; for(let i=0;i<70;i++){const m=(lo+hi)/2; if(calc(m).Q>Q) hi=m; else lo=m;} const y=(lo+hi)/2; const c=calc(y); return {...c,y,V:Q/c.A};}
+function statusClass(txt){return txt==='Favorável'?'ok':(txt==='Atenção' || txt==='Não atende Q-meta'?'warn':'bad');}
+function getState(){
+  const q0=parseFloat($('q0').value), qMeta=Math.max(.1,parseFloat($('qMeta').value)||9.5);
+  const withdrawal=Math.max(0,parseFloat($('withdrawal').value)||0), compensate=$('compensate').value==='1';
+  return {q0,qMeta,withdrawal,compensate,sifao:$('sifao').value,requiredQ:qMeta+(compensate?withdrawal:0)};
+}
+function arrivalFor(q0){
+  const q=Number(q0)||2, out={};
+  siphons.forEach(s=>{
+    const a=travel2[s.name], b=travel3[s.name], f=q-2;
+    out[s.name]={wave_h:Math.max(.05,a.wave_h+(b.wave_h-a.wave_h)*f),mass_h:Math.max(.05,a.mass_h+(b.mass_h-a.mass_h)*f)};
+  });
+  return out;
+}
+function fmtClock(mins){
+  mins=Math.max(0,Math.round(mins)); const h=Math.floor(mins/60),m=mins%60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+function normalizeStages(){
+  const st=getState();
+  if(!programStages.length) programStages=[{q:st.q0,duration:30},{q:Math.min(st.requiredQ,st.q0+1),duration:30}];
+  programStages[0].q=st.q0;
+  programStages=programStages.map((x,i)=>({q:Math.max(0,Number(x.q)||0),duration:Math.max(0,Number(x.duration)||0)}));
+}
+function stageTimeline(){
+  normalizeStages(); let t=0;
+  return programStages.map((s,i)=>{const prev=i?programStages[i-1].q:s.q; const row={...s,index:i,startMin:t,endMin:t+s.duration,dq:i?s.q-prev:0}; t+=s.duration; return row;});
+}
+function totalProgramMinutes(){const a=stageTimeline(); return a.length?a[a.length-1].endMin:0;}
+function programFlowAtMinute(min){
+  const tl=stageTimeline(); if(!tl.length) return getState().q0;
+  let q=tl[0].q;
+  for(const e of tl){ if(min+1e-9>=e.startMin) q=e.q; else break; }
+  return q;
+}
+function localFlowAtTime(hours,siphon,st=getState()){
+  const arr=arrivalFor(st.q0)[siphon.name].wave_h*60;
+  return programFlowAtMinute(hours*60-arr);
+}
+function eventTransient(event,siphon){
+  if(event.index===0) return {deltaH:0,pmin:siphon.dynamic,risk:'Base',cls:'event-neutral'};
+  const prev=programStages[event.index-1].q, dq=event.q-prev, dv=Math.abs(dq)/pipeArea;
+  const maneuver=Math.max(1,event.duration||1), base=interp(siphon.hammer,maneuver), refV=9.5/pipeArea;
+  const deltaH=base*(dv/refV), qavg=Math.max(.1,(prev+event.q)/2), dyn=siphon.dynamic*Math.pow(qavg/9.5,2), pmin=dyn-deltaH;
+  let risk='Favorável',cls='event-ok';
+  if(pmin<0 || deltaH>dyn*1.5){risk='Crítico';cls='event-bad';}
+  else if(pmin<1 || Math.abs(dq)>=1.5 || maneuver<15){risk='Atenção';cls='event-warn';}
+  return {deltaH,pmin,risk,cls,dq,maneuver};
+}
+function currentScreening(){
+  const tl=stageTimeline(), lastEvent=tl.length>1?tl[tl.length-1]:tl[0];
+  return siphons.map(s=>({...s,...eventTransient(lastEvent,s)}));
+}
+function generateProgram(){
+  const st=getState(), dq=Math.max(.05,parseFloat($('defaultDQ').value)||1), dt=Math.max(1,parseFloat($('defaultDT').value)||30);
+  const dir=st.requiredQ>=st.q0?1:-1; programStages=[{q:st.q0,duration:dt}]; let q=st.q0, guard=0;
+  while(((dir>0&&q<st.requiredQ-1e-9)||(dir<0&&q>st.requiredQ+1e-9))&&guard++<200){q += dir*dq; if((dir>0&&q>st.requiredQ)||(dir<0&&q<st.requiredQ)) q=st.requiredQ; programStages.push({q:Number(q.toFixed(4)),duration:dt});}
+  renderProgramTable(); update();
+}
+function renderProgramTable(){
+  normalizeStages(); const tl=stageTimeline();
+  $('programTable').innerHTML=tl.map((e,i)=>{const rate=i&&e.duration>0?e.dq/e.duration:0; return `<tr data-stage="${i}"><td><b>${i}</b></td><td>${fmtClock(e.startMin)}</td><td><input class="stage-q" data-i="${i}" type="number" min="0" step="0.05" value="${e.q}"></td><td><input class="stage-dt" data-i="${i}" type="number" min="0" step="1" value="${e.duration}"></td><td>${i?((e.dq>=0?'+':'')+fmt(e.dq,2)):'—'}</td><td>${i&&e.duration?fmt(rate,4)+' m³/s/min':'—'}</td><td>${i?`<button class="btn danger remove-stage" data-i="${i}">Excluir</button>`:'Regime inicial'}</td></tr>`}).join('');
+  document.querySelectorAll('.stage-q').forEach(el=>el.addEventListener('input',e=>{const i=+e.target.dataset.i; if(i===0){$('q0').value=String(e.target.value); programStages[0].q=parseFloat(e.target.value)||2;} else programStages[i].q=parseFloat(e.target.value)||0; renderProgramTable(); update(false);}));
+  document.querySelectorAll('.stage-dt').forEach(el=>el.addEventListener('input',e=>{const i=+e.target.dataset.i; programStages[i].duration=Math.max(0,parseFloat(e.target.value)||0); renderProgramTable(); update(false);}));
+  document.querySelectorAll('.remove-stage').forEach(el=>el.addEventListener('click',e=>{programStages.splice(+e.target.dataset.i,1); renderProgramTable(); update(false);}));
+}
+function drawSchematic(filter='all'){const svg=$('schematicMap'); const W=1200,H=680; let out=`<rect x="0" y="0" width="${W}" height="${H}" fill="url(#bg)"/>`; out += `<defs><linearGradient id="bg" x1="0" x2="1"><stop offset="0%" stop-color="#f8fcff"/><stop offset="100%" stop-color="#e6f0f6"/></linearGradient></defs>`; for(let i=0;i<7;i++){const x=60+i*(W-120)/6; out += `<line x1="${x}" y1="20" x2="${x}" y2="660" stroke="#d5e2ea" stroke-dasharray="4 6"/>`;} for(let i=0;i<5;i++){const y=40+i*(H-80)/4; out += `<line x1="20" y1="${y}" x2="1180" y2="${y}" stroke="#d5e2ea" stroke-dasharray="4 6"/>`;}
+  svgLines.forEach(l=>{if(filter!=='all' && filter!==l.cls) return; const stroke=l.cls==='linha'?'#38c0ea':'#eebf4e'; const sw=l.cls==='linha'?4.5:3.5; out += `<polyline points="${l.pts}" fill="none" stroke="${stroke}" stroke-width="${sw}" opacity="0.92"/>`;});
+  svgPoints.forEach((p)=>{if(filter==='linha'||filter==='tubular') return; if(filter==='sifao_alvo' && !['sifao_alvo','origem'].includes(p.cls)) return; const style = p.cls==='origem'?['#f0b22f',11]:p.cls==='sifao_alvo'?['#de6b4f',10]:['#8b6bb0',8]; out += `<circle cx="${p.x}" cy="${p.y}" r="${style[1]}" fill="${style[0]}" stroke="#fff" stroke-width="2"/>`; out += `<text x="${p.x+12}" y="${p.y-12}" font-size="14" font-weight="800" fill="#0a2340" stroke="#fff" stroke-width="4" paint-order="stroke">${p.name}</text>`; });
+  svg.innerHTML=out;}
+function fillSifaoSelect(){ $('sifao').innerHTML = siphons.map(s=>`<option value="${s.id}">${s.name}</option>`).join(''); }
+function update(reRender=true){
+  const st=getState(); normalizeStages(); if(reRender) renderProgramTable();
+  $('q0lbl').textContent=fmt(st.q0,1)+' m³/s'; $('qMetaLbl').textContent=fmt(st.qMeta,2)+' m³/s'; $('wLbl').textContent=fmt(st.withdrawal,2)+' m³/s'; $('compLbl').textContent=st.compensate?'Sim':'Não'; $('dqLbl').textContent=fmt(parseFloat($('defaultDQ').value)||0,2)+' m³/s'; $('dtLbl').textContent=fmt(parseFloat($('defaultDT').value)||0,0)+' min';
+  const sref=siphons.find(s=>s.id===st.sifao)||siphons[0], tl=stageTimeline(), finalQ=tl.length?tl[tl.length-1].q:st.q0, totalMin=totalProgramMinutes(); if($('sifLbl')) $('sifLbl').textContent=sref.name;
+  const v0=st.q0/pipeArea, vf=finalQ/pipeArea, ch0=solveChannel(st.q0), chF=solveChannel(Math.max(.01,finalQ)), arr=arrivalFor(st.q0);
+  const events=tl.slice(1).map(e=>({...e,...eventTransient(e,sref)})), worst=events.length?events.reduce((a,b)=>b.deltaH>a.deltaH?b:a):{deltaH:0,pmin:sref.dynamic,risk:'Base'};
+  const qEffective=finalQ-st.withdrawal, meets=qEffective>=st.qMeta-.01;
+  $('simResultsTop').innerHTML=`<article class="res"><span>Programa</span><strong>${tl.length} etapas</strong><small>${fmt(totalMin,0)} min = ${fmt(totalMin/60,2)} h</small></article><article class="res"><span>Q necessária em Curral</span><strong>${fmt(st.requiredQ,2)} m³/s</strong><small>meta ${fmt(st.qMeta,2)} + compensação</small></article><article class="res"><span>Q final programada</span><strong>${fmt(finalQ,2)} m³/s</strong><small>Q efetiva após retiradas ≈ ${fmt(qEffective,2)}</small></article><article class="res"><span>Atendimento da meta</span><strong>${meets?'Sim':'Não'}</strong><small><span class="status ${meets?'ok':'warn'}">${meets?'Atende':'Rever programação'}</span></small></article>`;
+  $('simResultsBottom').innerHTML=`<article class="res"><span>Velocidade</span><strong>${fmt(v0)} → ${fmt(vf)} m/s</strong><small>inicial → final programada</small></article><article class="res"><span>Pior ΔH screening · ${sref.name}</span><strong>${fmt(worst.deltaH)} mca</strong><small>maior evento da agenda</small></article><article class="res"><span>1ª chegada de onda</span><strong>${fmt(arr[sref.name].wave_h)} h</strong><small>após cada comando, soma-se o instante do evento</small></article><article class="res"><span>Advecção inicial</span><strong>${fmt(arr[sref.name].mass_h)} h</strong><small>referência, não estabilização oficial</small></article>`;
+  $('arrivalTable').innerHTML=siphons.map(x=>`<tr><td><b>${x.name}</b></td><td>${fmt(arr[x.name].wave_h,2)} h</td><td>${fmt(arr[x.name].mass_h,2)} h</td><td>${fmt(kinematicHours(x,st.qMeta),2)} h</td></tr>`).join('');
+  const overlap=tl.slice(1).filter((e,i)=>{if(i===0)return false; return e.startMin-tl[i].startMin < arr[sref.name].wave_h*60;}).length;
+  $('implications').innerHTML=`<ul class="tight"><li>O sistema parte de <b>${fmt(st.q0,1)} m³/s em regime permanente</b>. O tempo total não é imposto: resulta da soma das durações das ${tl.length} etapas.</li><li>A meta operacional é <b>${fmt(st.qMeta,2)} m³/s</b>. Com retirada de <b>${fmt(st.withdrawal,2)} m³/s</b>, a vazão requerida em Curral Velho é <b>${fmt(st.requiredQ,2)} m³/s</b> quando a compensação está ativa.</li><li>Cada alteração de Q gera uma perturbação com chegada estimada própria. Em ${sref.name}, soma-se aproximadamente <b>${fmt(arr[sref.name].wave_h,2)} h</b> ao horário de cada comando.</li><li>${overlap?`Há <b>${overlap}</b> ocorrência(s) de comandos sucessivos potencialmente sobrepostos antes da propagação da perturbação anterior até ${sref.name}.`:'Não foi identificada sobreposição simples entre comandos consecutivos pelo critério de chegada de onda no sifão selecionado.'}</li><li>O maior ΔH de screening da agenda em ${sref.name} é <b>${fmt(worst.deltaH,2)} mca</b>. Este valor é um indicador relativo baseado na curva HAMMER disponível e <b>não equivale a uma simulação MOC/HAMMER oficial da sequência completa</b>.</li><li>A programação pode terminar acima de 9,5 m³/s; não existe teto lógico no simulador, exceto os limites físicos e operacionais que deverão ser validados em campo/modelo.</li></ul>`;
+  drawBarChart(currentScreening()); drawFlowChart(st); drawMatrix(); updateAnimVisual(progress); updateCAV(); updateAllSiphonFlows(); updatePrepModule();
+}
+function drawBarChart(screening){ const svg=$('barChart'); const W=620,H=340,l=50,r=15,t=15,b=40; const max=Math.max(...screening.map(x=>x.deltaH))*1.15; let out=''; for(let i=0;i<=5;i++){ const yy=t+i*(H-t-b)/5; const val=max-(max*i/5); out += `<line x1="${l}" y1="${yy}" x2="${W-r}" y2="${yy}" stroke="#d5e2ea"/>`; out += `<text x="${l-6}" y="${yy+4}" text-anchor="end" font-size="11" fill="#607685">${fmt(val,1)}</text>`; } screening.forEach((s,i)=>{ const bw=70, gap=18, x=l+18+i*(bw+gap), h=(s.deltaH/max)*(H-t-b); const y=H-b-h; out += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="8" fill="${colors[i]}" opacity=".92"/>`; out += `<text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="11" fill="#0a2340">${fmt(s.deltaH,2)}</text>`; out += `<text x="${x+bw/2}" y="${H-b+16}" text-anchor="middle" font-size="11" fill="#607685">${s.name}</text>`; }); out += `<text x="310" y="334" text-anchor="middle" font-size="12" fill="#516b79">Sifões</text><text x="18" y="170" transform="rotate(-90 18,170)" text-anchor="middle" font-size="12" fill="#516b79">ΔH de screening (mca)</text>`; svg.innerHTML=out; }
+function drawFlowChart(st){
+  const svg=$('flowChart'), W=620,H=340,l=55,r=10,t=15,b=40, sel=siphons.find(s=>s.id===st.sifao)||siphons[0], arr=arrivalFor(st.q0);
+  const programH=totalProgramMinutes()/60, xmax=Math.max(6,Math.ceil(programH+arr[sel.name].wave_h+2)), xs=[]; for(let i=0;i<=180;i++)xs.push(i*xmax/180); const ys=xs.map(x=>localFlowAtTime(x,sel,st)); const maxy=Math.max(st.qMeta,st.requiredQ,...programStages.map(x=>x.q),...ys,1)+.5;
+  let out=''; for(let i=0;i<=5;i++){const yy=t+i*(H-t-b)/5,val=maxy*(1-i/5);out+=`<line x1="${l}" y1="${yy}" x2="${W-r}" y2="${yy}" stroke="#d5e2ea"/><text x="${l-6}" y="${yy+4}" text-anchor="end" font-size="11" fill="#607685">${fmt(val,1)}</text>`;} for(let i=0;i<=6;i++){const xx=l+i*(W-l-r)/6,val=xmax*i/6;out+=`<line x1="${xx}" y1="${H-b}" x2="${xx}" y2="${H-b+5}" stroke="#607685"/><text x="${xx}" y="${H-b+18}" text-anchor="middle" font-size="11" fill="#607685">${fmt(val,1)}</text>`;}
+  const pts=xs.map((x,i)=>`${l+x/xmax*(W-l-r)},${H-b-(ys[i]/maxy)*(H-t-b)}`).join(' '); out+=`<polyline points="${pts}" fill="none" stroke="#005a8d" stroke-width="3"/>`;
+  stageTimeline().slice(1).forEach((e,i)=>{const h=e.startMin/60+arr[sel.name].wave_h;if(h<=xmax){const xx=l+h/xmax*(W-l-r);out+=`<line x1="${xx}" y1="${t}" x2="${xx}" y2="${H-b}" stroke="#19b4b0" stroke-dasharray="4 5" opacity=".65"/><text x="${xx+3}" y="${t+12+(i%3)*11}" font-size="9" fill="#177c7b">E${e.index}</text>`;}});
+  out+=`<text x="310" y="334" text-anchor="middle" font-size="12" fill="#516b79">Tempo desde o início da programação (h)</text><text x="18" y="170" transform="rotate(-90 18,170)" text-anchor="middle" font-size="12" fill="#516b79">Q estimada em ${sel.name} (m³/s)</text>`; svg.innerHTML=out;
+}
+function drawMatrix(){
+  const st=getState(), sel=siphons.find(s=>s.id===st.sifao)||siphons[0], arr=arrivalFor(st.q0)[sel.name], tl=stageTimeline();
+  let html='<thead><tr><th>Evento</th><th>Início</th><th>Q anterior → Q nova</th><th>ΔQ</th><th>Duração</th><th>Chegada onda em '+sel.name+'</th><th>ΔH screening</th><th>Pmín indic.</th><th>Classificação</th></tr></thead><tbody>';
+  tl.slice(1).forEach(e=>{const prev=programStages[e.index-1].q,tr=eventTransient(e,sel),arrivalMin=e.startMin+arr.wave_h*60;html+=`<tr class="${tr.cls}"><td><b>E${e.index}</b></td><td>${fmtClock(e.startMin)}</td><td>${fmt(prev,2)} → ${fmt(e.q,2)}</td><td>${e.dq>=0?'+':''}${fmt(e.dq,2)}</td><td>${fmt(e.duration,0)} min</td><td>${fmtClock(arrivalMin)}</td><td>${fmt(tr.deltaH,2)} mca</td><td>${fmt(tr.pmin,2)} mca</td><td><b>${tr.risk}</b></td></tr>`;});
+  if(tl.length===1)html+='<tr><td colspan="9">Nenhum evento de mudança de vazão programado.</td></tr>'; html+='</tbody>'; $('matrixTable').innerHTML=html;
+}
+
+function cavInterpZ(z){
+  if(z<=cavData[0].z) return {...cavData[0],clamped:true};
+  if(z>=cavData[cavData.length-1].z) return {...cavData[cavData.length-1],clamped:true};
+  for(let i=0;i<cavData.length-1;i++){
+    const a=cavData[i], b=cavData[i+1];
+    if(z>=a.z && z<=b.z){
+      const r=(z-a.z)/(b.z-a.z);
+      return {z,area:a.area+r*(b.area-a.area),vol:a.vol+r*(b.vol-a.vol),pct:a.pct+r*(b.pct-a.pct),clamped:false};
+    }
+  }
+  return {...cavData[0],clamped:true};
+}
+function cavInterpV(vol){
+  if(vol<=cavData[0].vol) return {...cavData[0],clamped:true};
+  if(vol>=cavData[cavData.length-1].vol) return {...cavData[cavData.length-1],clamped:true};
+  for(let i=0;i<cavData.length-1;i++){
+    const a=cavData[i], b=cavData[i+1];
+    if(vol>=a.vol && vol<=b.vol){
+      const den=(b.vol-a.vol)||1, r=(vol-a.vol)/den;
+      return {z:a.z+r*(b.z-a.z),area:a.area+r*(b.area-a.area),vol,pct:a.pct+r*(b.pct-a.pct),clamped:false};
+    }
+  }
+  return {...cavData[0],clamped:true};
+}
+function kinematicSpeed(Q){
+  const q1=Math.max(0.15,Q*0.985), q2=Q*1.015;
+  const a1=solveChannel(q1).A, a2=solveChannel(q2).A;
+  return (q2-q1)/Math.max(1e-6,(a2-a1));
+}
+function kinematicHours(s,Q=9.5){ return (s.dist*1000)/Math.max(.01,kinematicSpeed(Q))/3600; }
+function cavReleaseAtHour(h,st){ return programFlowAtMinute(h*60); }
+function simulateCAVBalance(){
+  const st=getState();
+  const z0=parseFloat($('cavZ0')?.value||84.6);
+  const preset=$('cavPreset')?.value||'manual';
+  let qin=parseFloat($('cavQin')?.value||st.q0);
+  if(preset==='q0') qin=st.q0;
+  else if(preset==='qmeta') qin=st.qMeta;
+  else if(preset==='qout') qin=st.requiredQ;
+  if($('cavQin') && preset!=='manual') $('cavQin').value=Number(qin).toFixed(2);
+  const horizon=parseFloat($('cavHours')?.value||24);
+  const limit=parseFloat($('cavLimit')?.value||83.77);
+  const initial=cavInterpZ(z0);
+  let vol=initial.vol, cross=null, minZ=z0;
+  const dt=60, steps=Math.ceil(horizon*3600/dt), series=[];
+  for(let i=0;i<=steps;i++){
+    const h=i*dt/3600;
+    if(i%10===0 || i===steps){
+      const c=cavInterpV(vol);
+      series.push({h,z:c.z,vol:c.vol,area:c.area,pct:c.pct,qout:cavReleaseAtHour(h,st),qin});
+      minZ=Math.min(minZ,c.z);
+      if(cross===null && c.z<=limit) cross=h;
+    }
+    if(i<steps){
+      const qout=cavReleaseAtHour(h,st);
+      vol += (qin-qout)*dt;
+      vol=Math.max(cavData[0].vol,Math.min(cavData[cavData.length-1].vol,vol));
+    }
+  }
+  const final=cavInterpV(vol);
+  return {st,z0,qin,horizon,limit,initial,final,series,cross,minZ,
+          dV:final.vol-initial.vol,dZ:final.z-z0,qTarget:programStages.length?programStages[programStages.length-1].q:st.q0};
+}
+function drawCAVCurve(sim){
+  const svg=$('cavCurveChart'); if(!svg) return;
+  const W=650,H=320,l=62,r=20,t=18,b=42;
+  const data=cavData.filter(d=>d.z>=75 && d.z<=89.1);
+  const xmin=75,xmax=89.1,ymin=0,ymax=Math.max(...data.map(d=>d.vol))/1e6;
+  let out='';
+  for(let i=0;i<=5;i++){const yy=t+i*(H-t-b)/5,val=ymax*(1-i/5);out+=`<line x1="${l}" y1="${yy}" x2="${W-r}" y2="${yy}" stroke="#d5e2ea"/><text x="${l-7}" y="${yy+4}" text-anchor="end" font-size="11" fill="#607685">${fmt(val,1)}</text>`;}
+  for(let i=0;i<=7;i++){const xx=l+i*(W-l-r)/7,z=xmin+(xmax-xmin)*i/7;out+=`<line x1="${xx}" y1="${H-b}" x2="${xx}" y2="${H-b+5}" stroke="#607685"/><text x="${xx}" y="${H-b+18}" text-anchor="middle" font-size="10" fill="#607685">${fmt(z,1)}</text>`;}
+  const pts=data.map(d=>`${l+(d.z-xmin)/(xmax-xmin)*(W-l-r)},${H-b-(d.vol/1e6-ymin)/(ymax-ymin)*(H-t-b)}`).join(' ');
+  out+=`<polyline points="${pts}" fill="none" stroke="#005a8d" stroke-width="3"/>`;
+  const px=(z,v)=>({x:l+(z-xmin)/(xmax-xmin)*(W-l-r),y:H-b-(v/1e6-ymin)/(ymax-ymin)*(H-t-b)});
+  const p0=px(sim.initial.z,sim.initial.vol), pf=px(sim.final.z,sim.final.vol);
+  out+=`<circle cx="${p0.x}" cy="${p0.y}" r="7" fill="#238b61" stroke="#fff" stroke-width="2"/><text x="${p0.x+9}" y="${p0.y-8}" font-size="11" fill="#176847">inicial ${fmt(sim.initial.z,2)} m</text>`;
+  out+=`<circle cx="${pf.x}" cy="${pf.y}" r="7" fill="#d66c42" stroke="#fff" stroke-width="2"/><text x="${pf.x+9}" y="${pf.y+16}" font-size="11" fill="#a43b3b">final ${fmt(sim.final.z,2)} m</text>`;
+  out+=`<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="#516b79">Cota (m)</text><text x="18" y="${H/2}" transform="rotate(-90 18,${H/2})" text-anchor="middle" font-size="12" fill="#516b79">Volume (hm³)</text>`;
+  svg.innerHTML=out;
+}
+function drawCAVLevel(sim){
+  const svg=$('cavLevelChart'); if(!svg) return;
+  const W=650,H=320,l=62,r=20,t=18,b=42;
+  const xmin=0,xmax=sim.horizon;
+  let zmin=Math.min(sim.limit,...sim.series.map(x=>x.z))-.15, zmax=Math.max(sim.z0,...sim.series.map(x=>x.z))+.15;
+  if(zmax-zmin<.5){zmax+=.25;zmin-=.25;}
+  let out='';
+  for(let i=0;i<=5;i++){const yy=t+i*(H-t-b)/5,val=zmax-(zmax-zmin)*i/5;out+=`<line x1="${l}" y1="${yy}" x2="${W-r}" y2="${yy}" stroke="#d5e2ea"/><text x="${l-7}" y="${yy+4}" text-anchor="end" font-size="11" fill="#607685">${fmt(val,2)}</text>`;}
+  for(let i=0;i<=6;i++){const xx=l+i*(W-l-r)/6,h=xmax*i/6;out+=`<line x1="${xx}" y1="${H-b}" x2="${xx}" y2="${H-b+5}" stroke="#607685"/><text x="${xx}" y="${H-b+18}" text-anchor="middle" font-size="10" fill="#607685">${fmt(h,0)}</text>`;}
+  const pts=sim.series.map(d=>`${l+d.h/xmax*(W-l-r)},${H-b-(d.z-zmin)/(zmax-zmin)*(H-t-b)}`).join(' ');
+  out+=`<polyline points="${pts}" fill="none" stroke="#005a8d" stroke-width="3"/>`;
+  const yLim=H-b-(sim.limit-zmin)/(zmax-zmin)*(H-t-b);
+  out+=`<line x1="${l}" y1="${yLim}" x2="${W-r}" y2="${yLim}" stroke="#d66c42" stroke-dasharray="7 5"/><text x="${W-r-5}" y="${yLim-6}" text-anchor="end" font-size="11" fill="#a43b3b">referência ${fmt(sim.limit,2)} m</text>`;
+  out+=`<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="#516b79">Tempo (h)</text><text x="18" y="${H/2}" transform="rotate(-90 18,${H/2})" text-anchor="middle" font-size="12" fill="#516b79">Cota do reservatório (m)</text>`;
+  svg.innerHTML=out;
+}
+function updateCAV(){
+  if(!$('cavResults')) return;
+  const sim=simulateCAVBalance();
+  const capacity=12170000;
+  const deficit=Math.max(0,-sim.dV)/1e6;
+  const margin=sim.final.z-sim.limit;
+  const status=sim.final.z>sim.limit+.15?'Favorável':(sim.final.z>sim.limit?'Atenção':'Crítico');
+  $('cavResults').innerHTML=
+    `<article><span>Volume inicial</span><strong>${fmt(sim.initial.vol/1e6,3)} hm³</strong><small>${fmt(sim.initial.pct,1)}% da capacidade de referência</small></article>`+
+    `<article><span>Descarga-alvo no Curral</span><strong>${fmt(sim.qTarget,2)} m³/s</strong><small>inclui compensação se selecionada</small></article>`+
+    `<article><span>Cota ao final</span><strong>${fmt(sim.final.z,2)} m</strong><small>Δz = ${fmt(sim.dZ,2)} m</small></article>`+
+    `<article><span>Variação de volume</span><strong>${fmt(sim.dV/1e6,3)} hm³</strong><small>déficit acumulado = ${fmt(deficit,3)} hm³</small></article>`+
+    `<article><span>Status vs cota-ref.</span><strong>${status}</strong><small>margem final = ${fmt(margin,2)} m</small></article>`;
+  drawCAVCurve(sim); drawCAVLevel(sim);
+  const baseMarks=[0,sim.horizon*.25,sim.horizon*.5,sim.horizon*.75,sim.horizon]; const eventMarks=stageTimeline().map(e=>e.startMin/60).filter(h=>h<=sim.horizon); const marks=[...new Set([...baseMarks,...eventMarks].map(h=>Number(h.toFixed(3))))].sort((a,b)=>a-b);
+  $('cavBalanceTable').innerHTML=marks.map(h=>{
+    let d=sim.series.reduce((best,x)=>Math.abs(x.h-h)<Math.abs(best.h-h)?x:best,sim.series[0]);
+    return `<tr><td>${fmt(h,0)} h</td><td>${fmt(d.qout,2)} m³/s</td><td>${fmt(d.qin,2)} m³/s</td><td><b>${fmt(d.z,2)} m</b></td><td>${fmt(d.vol/1e6,3)} hm³</td></tr>`;
+  }).join('');
+  const theoretical=cavInterpZ(83.77);
+  const bullets=[
+    `<ul class="tight">`,
+    `<li>Na cota inicial <b>${fmt(sim.z0,2)} m</b>, a CAV fornece aproximadamente <b>${fmt(sim.initial.vol/1e6,3)} hm³</b> e área de <b>${fmt(sim.initial.area,3)} km²</b>.</li>`,
+    `<li>Com Qin = <b>${fmt(sim.qin,2)} m³/s</b> e a programação atual, o balanço em ${fmt(sim.horizon,0)} h produz ΔV = <b>${fmt(sim.dV/1e6,3)} hm³</b> e Δz = <b>${fmt(sim.dZ,2)} m</b>.</li>`,
+    sim.cross===null?`<li>A cota não cruza a referência de <b>${fmt(sim.limit,2)} m</b> dentro do horizonte simulado.</li>`:`<li><b>Atenção:</b> a cota cruza a referência de ${fmt(sim.limit,2)} m por volta de <b>${fmt(sim.cross,1)} h</b>.</li>`,
+    `<li>Na referência teórica 83,77 m, a CAV corresponde a aproximadamente <b>${fmt(theoretical.vol/1e6,3)} hm³</b>. Esse valor é apenas um indicador energético preliminar e não substitui a curva real de descarga das comportas.</li>`,
+    `<li>Para manter a cota praticamente estacionária após atingir a meta, a afluência precisa se aproximar da <b>descarga total liberada pelo Curral Velho</b>, além de considerar outras entradas/saídas do reservatório.</li>`,
+    `</ul>`
+  ];
+  $('cavInterpretation').innerHTML=bullets.join('');
+}
+function flowStatus(Q,target,waveArrived){if(!waveArrived)return ['base','Regime base'];if(Q>=.98*target)return ['meta','Próximo da meta'];return ['trans','Em transição'];}
+function updateAllSiphonFlows(){
+  if(!$('sixFlowTable'))return; const st=getState(),time=parseFloat($('flowTime')?.value||12),horizon=parseFloat($('flowHorizon')?.value||48),arrival=arrivalFor(st.q0),target=st.qMeta;
+  $('flowTimeLbl').textContent=fmt(time,1)+' h';
+  $('sixFlowTable').innerHTML=siphons.map(s=>{const q=localFlowAtTime(time,s,st),v=q/pipeArea,ch=solveChannel(Math.max(.01,q)),kin=kinematicHours(s,st.qMeta),events=stageTimeline().slice(1),arrived=events.filter(e=>time*60>=e.startMin+arrival[s.name].wave_h*60),next=events.find(e=>time*60<e.startMin+arrival[s.name].wave_h*60),last=arrived.length?arrived[arrived.length-1]:null; let cls='base',label='Regime base';if(last){cls=q>=.98*target?'meta':'trans';label=q>=.98*target?'Q ≥ 98% meta':'Respondendo a E'+last.index;} const pct=Math.max(0,Math.min(100,q/Math.max(.01,target)*100));return `<tr><td><b>${s.name}</b><br><small>${last?'última: E'+last.index:'nenhum evento recebido'}${next?' · próxima E'+next.index+' em '+fmt((next.startMin+arrival[s.name].wave_h*60-time*60),0)+' min':''}</small></td><td>${fmt(s.dist,2)} km</td><td>${fmt(arrival[s.name].wave_h,2)} h</td><td>${fmt(kin,2)} h</td><td><b>${fmt(q,2)} m³/s</b></td><td>${fmt(v,2)} m/s</td><td>${fmt(ch.y,2)} m</td><td><div class="flow-meter"><span style="width:${pct}%"></span></div><small>${fmt(pct,0)}%</small></td><td><span class="tag ${cls}">${label}</span></td></tr>`;}).join(''); drawAllFlowsChart(st,horizon,time);
+}
+function drawAllFlowsChart(st,horizon,markerT){
+  const svg=$('allFlowsChart');if(!svg)return;const W=1200,H=390,l=58,r=18,t=18,b=48,maxy=Math.max(st.qMeta,st.requiredQ,...programStages.map(x=>x.q),10)+.5;let out='';for(let i=0;i<=5;i++){const yy=t+i*(H-t-b)/5,val=maxy*(1-i/5);out+=`<line x1="${l}" y1="${yy}" x2="${W-r}" y2="${yy}" stroke="#d5e2ea"/><text x="${l-7}" y="${yy+4}" text-anchor="end" font-size="11" fill="#607685">${fmt(val,1)}</text>`;}for(let i=0;i<=8;i++){const xx=l+i*(W-l-r)/8,h=horizon*i/8;out+=`<line x1="${xx}" y1="${H-b}" x2="${xx}" y2="${H-b+5}" stroke="#607685"/><text x="${xx}" y="${H-b+18}" text-anchor="middle" font-size="10" fill="#607685">${fmt(h,0)}</text>`;}siphons.forEach((s,idx)=>{const pts=[];for(let i=0;i<=180;i++){const h=i*horizon/180,q=localFlowAtTime(h,s,st),x=l+h/horizon*(W-l-r),y=H-b-q/maxy*(H-t-b);pts.push(`${x},${y}`);}out+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${colors[idx]}" stroke-width="2.5"/><text x="${W-r-5}" y="${t+13+idx*17}" text-anchor="end" font-size="11" fill="${colors[idx]}">${s.name}</text>`;});const xm=l+Math.min(horizon,markerT)/horizon*(W-l-r);out+=`<line x1="${xm}" y1="${t}" x2="${xm}" y2="${H-b}" stroke="#0a2340" stroke-dasharray="5 5"/><text x="${xm+5}" y="${H-b-8}" font-size="11" fill="#0a2340">t=${fmt(markerT,1)} h</text><text x="${W/2}" y="${H-7}" text-anchor="middle" font-size="12" fill="#516b79">Tempo após início da programação (h)</text><text x="18" y="${H/2}" transform="rotate(-90 18,${H/2})" text-anchor="middle" font-size="12" fill="#516b79">Q estimada no sifão (m³/s)</text>`;svg.innerHTML=out;
+}
+function applyCAVPreset(){
+  const p=$('cavPreset')?.value||'manual',st=getState();
+  if(p==='q0') $('cavQin').value=st.q0;
+  else if(p==='qmeta') $('cavQin').value=st.qMeta;
+  else if(p==='qout') $('cavQin').value=st.requiredQ.toFixed(2);
+  updateCAV();
+}
+
+
+let animReq=null, animRunning=false, animStart=null, progress=0, animDuration=16000;
+function getAnimSpec(){
+  const nodes=[
+    {name:'Curral Velho',x:110,y:78,dist:0,kind:'source'},
+    {name:'Boa Vista',x:370,y:118,dist:32.93,kind:'siphon'},
+    {name:'Mão Ruiva',x:520,y:145,dist:37.37,kind:'siphon'},
+    {name:'Melancias',x:650,y:166,dist:39.55,kind:'siphon'},
+    {name:'Pirangi',x:900,y:217,dist:68.51,kind:'siphon'},
+    {name:'Serrote',x:1030,y:252,dist:75.58,kind:'siphon'},
+    {name:'Juazeirinho',x:1145,y:284,dist:81.61,kind:'siphon'}
+  ];
+  const d='M 110 78 C 210 82, 300 98, 370 118 S 480 139, 520 145 S 620 160, 650 166 S 830 201, 900 217 S 995 243, 1030 252 S 1112 275, 1145 284';
+  return {nodes,d};
+}
+function segLabel(a,b){ return a && b ? `${a.name} → ${b.name}` : (a ? a.name : 'Curral Velho'); }
+function drawAnimBase(){
+  const svg=$('animSvg');
+  const spec=getAnimSpec();
+  const nodes=spec.nodes;
+  let out=`
+  <defs>
+    <linearGradient id="animSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="100%" stop-color="#eef5fa"/>
+    </linearGradient>
+    <linearGradient id="animProg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1cc7ff"/>
+      <stop offset="100%" stop-color="#005a8d"/>
+    </linearGradient>
+    <linearGradient id="terrainGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dfe8ef" stop-opacity="0.0"/>
+      <stop offset="100%" stop-color="#dfe8ef" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#7ca1b9" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect x="0" y="0" width="1280" height="360" fill="url(#animSky)" rx="18"/>
+  <path d="M 55 66 L 1210 315" stroke="#9fb7c8" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.7"/>
+  <text x="934" y="325" font-size="12" fill="#607685">declividade esquemática do sistema</text>
+  <path d="M 65 92 C 260 123, 420 164, 560 190 S 860 252, 1010 287 S 1150 314, 1235 330 L 1235 348 L 65 348 Z" fill="url(#terrainGrad)"/>
+  <ellipse cx="98" cy="76" rx="54" ry="26" fill="#8edfff" opacity="0.45"/>
+  <text x="47" y="42" font-size="13" font-weight="800" fill="#0a2340">Açude Curral Velho</text>
+  <text x="40" y="58" font-size="11" fill="#607685">origem da onda hidráulica</text>
+  <path d="${spec.d}" fill="none" stroke="#bfd8e6" stroke-width="28" stroke-linecap="round" filter="url(#softShadow)"/>
+  <path d="${spec.d}" fill="none" stroke="#7fd0ef" stroke-width="18" stroke-linecap="round"/>
+  <path id="animCenter" d="${spec.d}" fill="none" stroke="#0b5d87" stroke-width="2.3" stroke-linecap="round" stroke-dasharray="10 10" opacity="0.60"/>
+  <path id="animProgressGlow" d="${spec.d}" fill="none" stroke="#1cc7ff" stroke-width="28" stroke-linecap="round" opacity="0.18"/>
+  <path id="animProgress" d="${spec.d}" fill="none" stroke="url(#animProg)" stroke-width="18" stroke-linecap="round"/>
+  `;
+  for(let i=0;i<nodes.length-1;i++){
+    const a=nodes[i],b=nodes[i+1],mx=(a.x+b.x)/2,my=(a.y+b.y)/2+28;
+    out += `<text x="${mx}" y="${my}" text-anchor="middle" font-size="11" font-weight="700" fill="#4d6778">${fmt(b.dist-a.dist,2)} km</text>`;
+  }
+  nodes.forEach((n,i)=>{
+    const fill=i===0?'#1aa0e8':'#de6b4f';
+    const r=i===0?15:12;
+    out += `<circle id="node${i}" cx="${n.x}" cy="${n.y}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="3"/>`;
+    out += `<text x="${n.x+14}" y="${n.y-14}" font-size="15" font-weight="800" fill="#0a2340" stroke="#fff" stroke-width="4" paint-order="stroke">${n.name}</text>`;
+    out += `<rect x="${n.x-28}" y="${n.y+10}" width="56" height="18" rx="9" fill="#ffffff" opacity="0.92" stroke="#d5e2ea"/>`;
+    out += `<text x="${n.x}" y="${n.y+23}" text-anchor="middle" font-size="10" font-weight="800" fill="#4c6677">${fmt(n.dist,2)} km</text>`;
+  });
+  out += `
+    <circle id="trail3" cx="110" cy="78" r="6" fill="#71d8ff" opacity="0.35"/>
+    <circle id="trail2" cx="110" cy="78" r="8" fill="#55ceff" opacity="0.5"/>
+    <circle id="trail1" cx="110" cy="78" r="10" fill="#2fc4ff" opacity="0.7"/>
+    <circle id="pulse" cx="110" cy="78" r="14" fill="#0aa9ff" opacity="0.98" stroke="#fff" stroke-width="3"/>
+    <g id="pulseBadge" transform="translate(122 46)">
+      <rect x="0" y="0" width="86" height="24" rx="12" fill="#0a2340" opacity="0.92"/>
+      <text id="pulseBadgeText" x="43" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">0,00 km</text>
+    </g>
+    <g id="animHud" transform="translate(880 18)">
+      <rect x="0" y="0" width="370" height="108" rx="14" fill="#ffffff" opacity="0.95" stroke="#d6e2ea"/>
+      <text x="16" y="22" font-size="13" font-weight="900" fill="#0a2340">Painel dinâmico da frente hidráulica</text>
+      <text id="animHudTrecho" x="16" y="44" font-size="12" fill="#355263">Trecho atual: Curral Velho → Boa Vista</text>
+      <text id="animHudDist" x="16" y="64" font-size="12" fill="#355263">Distância percorrida: 0,00 km</text>
+      <text id="animHudVel" x="16" y="84" font-size="12" fill="#355263">Velocidade média local da frente: 0,00 km/h</text>
+      <text id="animHudTime" x="16" y="104" font-size="12" fill="#355263">Tempo hidráulico representado: 0,00 h</text>
+    </g>
+  `;
+  svg.innerHTML=out;
+  window.animSpec=spec;
+  window.animNodes=nodes;
+  const basePath=$('animCenter');
+  const len=basePath.getTotalLength();
+  window.animPathLength=len;
+  ['animProgress','animProgressGlow'].forEach(id=>{
+    const el=$(id); if(!el) return;
+    el.style.strokeDasharray=`${len} ${len}`;
+    el.style.strokeDashoffset=`${len}`;
+  });
+  updateAnimVisual(0);
+}
+function pointAlong(u){
+  const path=$('animCenter');
+  if(!path) return {x:110,y:78};
+  const len=(window.animPathLength||path.getTotalLength())*Math.max(0,Math.min(1,u));
+  return path.getPointAtLength(len);
+}
+function animTimeline(){
+  const st=getState(),arr=arrivalFor(st.q0),nodes=(window.animNodes||getAnimSpec().nodes);
+  return nodes.map((n,i)=>({name:n.name,dist:n.dist,t:i===0?0:(arr[n.name]?.wave_h||0)}));
+}
+function currentAnimMetrics(u){
+  const nodes=(window.animNodes||getAnimSpec().nodes), timeline=animTimeline();
+  const totalDist=nodes[nodes.length-1].dist, dist=Math.max(0,Math.min(totalDist,u*totalDist));
+  let idx=0; while(idx<nodes.length-1 && dist>nodes[idx+1].dist) idx++;
+  const a=nodes[idx], b=nodes[Math.min(nodes.length-1, idx+1)];
+  const ta=timeline[idx].t, tb=timeline[Math.min(timeline.length-1, idx+1)].t;
+  const spanDist=Math.max(0.001,b.dist-a.dist), frac=b===a?0:(dist-a.dist)/spanDist;
+  const timeH=ta+(tb-ta)*Math.max(0,Math.min(1,frac));
+  const speedKmH=spanDist/Math.max(0.001,tb-ta);
+  const speedMS=speedKmH/3.6;
+  return {dist,timeH,speedKmH,speedMS,segment:segLabel(a,b),a,b,totalDist};
+}
+function updateAnimText(st,metrics){
+  const tl=stageTimeline(),qFinal=tl.length?tl[tl.length-1].q:st.q0;
+  if(!metrics){
+    $('animText').textContent=`Esquema com declividade: a frente azul mostra a propagação da onda operacional ao longo do canal e dos sifões. A figura informa trecho atual, distância percorrida, velocidade média local da frente e tempo hidráulico representado.`;
+    return;
+  }
+  $('animText').textContent=`Programa atual: ${tl.length} etapa(s), ${fmt(st.q0,1)} → ${fmt(qFinal,2)} m³/s. Frente no trecho ${metrics.segment}; distância percorrida ${fmt(metrics.dist,2)} km; velocidade média local da frente ≈ ${fmt(metrics.speedKmH,2)} km/h (${fmt(metrics.speedMS,2)} m/s); tempo hidráulico representado ${fmt(metrics.timeH,2)} h.`;
+}
+function updateAnimVisual(u){
+  const st=getState(),m=currentAnimMetrics(u),p=pointAlong(u),len=window.animPathLength||1;
+  ['animProgress','animProgressGlow'].forEach(id=>{ const el=$(id); if(el) el.style.strokeDashoffset=`${Math.max(0,len*(1-u))}`; });
+  [['trail3',0.085],['trail2',0.055],['trail1',0.03]].forEach(([id,lag])=>{ const pt=pointAlong(Math.max(0,u-lag)); const el=$(id); if(el){ el.setAttribute('cx',pt.x); el.setAttribute('cy',pt.y);} });
+  const pulse=$('pulse'); if(pulse){ pulse.setAttribute('cx', p.x); pulse.setAttribute('cy', p.y); }
+  const badge=$('pulseBadge');
+  if(badge){ badge.setAttribute('transform',`translate(${Math.min(1180,Math.max(20,p.x+12))} ${Math.max(18,p.y-34)})`); }
+  if($('pulseBadgeText')) $('pulseBadgeText').textContent=`${fmt(m.dist,2)} km`;
+  if($('animHudTrecho')) $('animHudTrecho').textContent=`Trecho atual: ${m.segment}`;
+  if($('animHudDist')) $('animHudDist').textContent=`Distância percorrida: ${fmt(m.dist,2)} km de ${fmt(m.totalDist,2)} km`;
+  if($('animHudVel')) $('animHudVel').textContent=`Velocidade média local da frente: ${fmt(m.speedKmH,2)} km/h (${fmt(m.speedMS,2)} m/s)`;
+  if($('animHudTime')) $('animHudTime').textContent=`Tempo hidráulico representado: ${fmt(m.timeH,2)} h`;
+  (window.animNodes||[]).forEach((n,i)=>{ const node=$('node'+i); if(!node) return; const reached=m.dist>=n.dist-1e-6; node.setAttribute('fill', i===0 ? '#1aa0e8' : (reached ? '#0aa9ff' : '#de6b4f')); node.setAttribute('r', reached ? (i===0?16:13) : (i===0?15:12)); });
+  updateAnimText(st,m);
+}
+function stepAnim(ts){
+  if(!animRunning) return;
+  if(animStart===null) animStart=ts-progress*animDuration;
+  const elapsed=ts-animStart;
+  progress=Math.max(0,Math.min(1,elapsed/animDuration));
+  updateAnimVisual(progress);
+  if(progress<1) animReq=requestAnimationFrame(stepAnim); else { animRunning=false; animStart=null; }
+}
+function playAnim(){ if(animRunning) return; animRunning=true; animReq=requestAnimationFrame(stepAnim); }
+function pauseAnim(){ animRunning=false; if(animReq) cancelAnimationFrame(animReq); animReq=null; }
+function resetAnim(){ pauseAnim(); progress=0; animStart=null; updateAnimVisual(0); }
+
+function updatePrepModule(){
+  const st=getState(),hold=Math.max(1,parseFloat($('prepHold')?.value||10)),withdrawal=Math.max(0,parseFloat($('prepWithdrawal')?.value||st.withdrawal)),seq=['Juazeirinho','Serrote','Pirangi','Melancias','Mão Ruiva','Boa Vista'],prepMinutes=seq.length*hold,tl=stageTimeline(),finalQ=tl.length?tl[tl.length-1].q:st.q0;
+  if($('prepQ0View'))$('prepQ0View').value=fmt(st.q0,1)+' m³/s';if($('prepQFinalView'))$('prepQFinalView').value=fmt(finalQ,2)+' m³/s';
+  if($('prepSummary'))$('prepSummary').innerHTML=`<article><span>Q inicial</span><strong>${fmt(st.q0,1)} m³/s</strong></article><article><span>Q final programada</span><strong>${fmt(finalQ,2)} m³/s</strong></article><article><span>Duração da programação</span><strong>${fmt(totalProgramMinutes(),0)} min</strong></article><article><span>Preparação das comportas</span><strong>≈ ${fmt(prepMinutes,0)} min</strong></article>`;
+  if($('prepGateTable'))$('prepGateTable').innerHTML=seq.map((name,i)=>`<tr><td>${i+1}</td><td><b>${name}</b></td><td>Abrir lentamente; verificar nível, pressão, ventilação e anormalidades</td><td>${fmt(hold,0)} min</td></tr>`).join('');
+  if($('prepRampTable'))$('prepRampTable').innerHTML=tl.map(e=>`<tr><td>${e.index}</td><td>${fmtClock(e.startMin)}</td><td><b>${fmt(e.q,2)} m³/s</b></td><td>${fmt(e.duration,0)} min</td></tr>`).join('');
+}
+['prepHold','prepWithdrawal'].forEach(id=>{const el=$(id);if(el)el.addEventListener('input',updatePrepModule);});
+
+['cavZ0','cavQin','cavHours','cavLimit'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('input', updateCAV); });
+if($('cavPreset')) $('cavPreset').addEventListener('change', applyCAVPreset);
+['flowTime','flowHorizon','flowRef'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('input', updateAllSiphonFlows); });
+
+$('generateProgram').addEventListener('click',generateProgram); $('addStage').addEventListener('click',()=>{const tl=stageTimeline(),last=tl.length?tl[tl.length-1]:{q:getState().q0};programStages.push({q:last.q,duration:Math.max(1,parseFloat($('defaultDT').value)||30)});renderProgramTable();update(false);}); $('resetProgram').addEventListener('click',()=>{programStages=[];$('q0').value='2';$('qMeta').value='9.5';$('withdrawal').value='0';$('compensate').value='1';$('defaultDQ').value='1';$('defaultDT').value='30';generateProgram();});
+['q0','qMeta','withdrawal','compensate','defaultDQ','defaultDT','sifao'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='q0')programStages[0]&&(programStages[0].q=parseFloat($('q0').value));update();}));
+$('playAnim').addEventListener('click', playAnim); $('pauseAnim').addEventListener('click', pauseAnim); $('resetAnim').addEventListener('click', resetAnim);
+fillSifaoSelect(); $('sifao').value='boa'; initLeafletMap(); drawAnimBase(); resetAnim(); generateProgram(); updatePrepModule();
+</script>
+<script>
+/* ===== Assistente técnico do painel ===== */
+(function(){
+function md(t){
+ t=String(t).replace(/\$\$?([^$]+?)\$\$?/g,(m,x)=>x.replace(/\\text\{([^}]*)\}/g,'$1').replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g,'($1)/($2)').replace(/\\Delta/g,'Δ').replace(/\\ge(q)?\b/g,'≥').replace(/\\le(q)?\b/g,'≤').replace(/\\approx/g,'≈').replace(/\\(times|cdot)/g,'×').replace(/\\rho/g,'ρ').replace(/\\(to|rightarrow)/g,'→').replace(/\\(left|right)/g,'').replace(/\\[,;! ]/g,' ').replace(/\\%/g,'%').replace(/\\\|/g,'|'));
+ const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ const inl=s=>esc(s).replace(/_\{([^}]*)\}/g,'<sub>$1</sub>').replace(/\^\{([^}]*)\}/g,'<sup>$1</sup>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');
+ const L=t.split('\n'),o=[];let i=0;
+ while(i<L.length){const l=L[i];
+  if(/^\s*\|/.test(l)){const rows=[];while(i<L.length&&/^\s*\|/.test(L[i])){if(!/^\s*\|[\s:|-]+\|?\s*$/.test(L[i]))rows.push(L[i].trim().replace(/^\||\|$/g,'').split('|').map(c=>inl(c.trim())));i++}
+   o.push('<table class="aiT">'+rows.map((r,k)=>'<tr>'+r.map(c=>k?'<td>'+c+'</td>':'<th>'+c+'</th>').join('')+'</tr>').join('')+'</table>');continue}
+  let m;
+  if(m=l.match(/^\s*#{1,6}\s+(.*)/))o.push('<div class="aiH">'+inl(m[1])+'</div>');
+  else if(/^\s*(-{3,}|\*{3,})\s*$/.test(l))o.push('<hr>');
+  else if(m=l.match(/^(\s*)[*-]\s+(.*)/))o.push('<div class="aiL" style="margin-left:'+Math.min(m[1].length,6)*5+'px">• '+inl(m[2])+'</div>');
+  else if(m=l.match(/^\s*(\d+)[.)]\s+(.*)/))o.push('<div class="aiL">'+m[1]+'. '+inl(m[2])+'</div>');
+  else if(!l.trim())o.push('<div class="aiSp"></div>');
+  else o.push('<div>'+inl(l)+'</div>');
+  i++}
+ return o.join('')}
+
+ const KB=`Você é o assistente técnico do "Painel Técnico — Sifões Lote 4 (Eixão das Águas), V7.0 · operação por etapas + propagação + screening de transientes", da COGERH. Responda em português, de forma objetiva, técnica e fundamentada, usando o ESTADO ATUAL abaixo. Diga explicitamente quando algo não consta nos dados ou exige validação (HAMMER oficial, as built, campo). Nunca apresente resultados como pressão transitória certificada.
+
+FINALIDADE: ferramenta de screening para planejar o comissionamento hidráulico da nova linha de sifões. Não substitui o modelo HAMMER oficial, dados as built, validação de campo nem a liberação formal da operação.
+
+PREMISSA REVISADA: o sistema inicia cheio e em regime permanente com Q inicial de 2,0, 3,0 ou 4,0 m³/s; linha antiga fechada e isolada. A partir daí o operador define etapas livres (vazão comandada e duração de cada etapa). Não há tempo total pré-fixado (ele é a soma das durações) nem vazão final travada em 9,5 m³/s: a vazão necessária em Curral Velho é Q-meta (+ retiradas intermediárias, se "compensar retirada" = sim; Q Curral = Q-meta + ΣQ retiradas). Cada mudança de vazão gera uma onda própria, com chegada estimada em cada sifão; o painel sinaliza superposição de eventos.
+
+REQUISITOS: RF-01 estado inicial; RF-02 meta e compensação; RF-03 agenda por etapas; RF-04 geração por ΔQ/Δt padrão + edição livre; RF-05 propagação por evento; RF-06 superposição; RF-07 screening de transiente por evento com base HAMMER; RF-08 CAV integrada usando a mesma Q(t); RF-09 estado local (Q estimada, última onda recebida, próxima onda, condição) em cada sifão.
+
+CADEIA HIDRÁULICA (POM, trechos 2 e 3): Tomada Curral Velho km 0 (2 comportas segmento 3,50×3,90 m, acionamento hidráulico; comando mestre da rampa); comportas de linha C-01 km 8,820 e C-02 km 16,260 (2 planas 2,50×2,50 m, servomotor cada); Sifão Palhano OCM km 23,135 → OCJ km 29,530 (condição de contorno antes de Boa Vista; deve estar previamente configurado e estável); C-03 km 45,805. O ensaio é hidraulicamente integrado, não um teste isolado dos seis sifões. Descargas de segurança a montante dos sifões e ventosas existem no POM, mas as curvas de admissão/expulsão de ar das ventosas NÃO estão disponíveis; a proteção contra ar não é certificada pelo painel. Cada sifão tem comporta plana 2,50×2,50 m com servomotor.
+
+COMPRIMENTOS: o POM mede OCM→OCJ e pode incluir transições; a análise transitória usa o comprimento hidráulico efetivo do conduto pressurizado do HAMMER. Não misturar nem "corrigir" automaticamente: explicitar a diferença no relatório.
+
+SCREENING DE TRANSIENTE (por evento, por sifão): para cada etapa i>0, ΔQ = Q_i − Q_(i−1); ΔV = |ΔQ|/A_tubo (D=2,5 m). ΔH_base = curva HAMMER do sifão interpolada pela duração da manobra (durações de referência 1–10, 15, 16 min; acima de 16 min decai ∝ 16/t), na condição de referência 9,5 m³/s; ΔH = ΔH_base × (ΔV/V_ref), V_ref = 9,5/A. Carga dinâmica = carga_dinâmica_ref × (Q_médio/9,5)²; P_min = carga dinâmica − ΔH. Classificação: Crítico se P_min<0 ou ΔH>1,5×carga dinâmica; Atenção se P_min<1 m, |ΔQ|≥1,5 m³/s ou duração da manobra <15 min; senão Favorável. A etapa 0 é a base. Serrote e Boa Vista são os mais críticos nos estudos de transiente existentes; os tempos de 30 e 90 min desses estudos referem-se a fechamento de comportas, não são tempos obrigatórios de abertura.
+
+PROPAGAÇÃO: o tempo de chegada da onda (dinâmica) e da massa em cada sifão é interpolado/extrapolado linearmente entre as tabelas do cenário 2 e do cenário 3 m³/s conforme Q inicial. A vazão local no instante t é a vazão programada em Curral Velho no instante (t − tempo de chegada da onda) — superposição temporal de eventos, aproximação de screening, não substitui Saint-Venant/MOC. Estado local: "Regime base" (onda ainda não chegou), "Em transição", "Próximo da meta" (Q ≥ 98% da meta). Canal: trapezoidal b=5 m, talude 1,5, n=1/70, S=0,00015 (lâmina normal equivalente via Manning). Velocidade no tubo = Q/A, A=π·2,5²/4.
+
+CAV CURRAL VELHO (arquivo cav_curral_velho.csv): balanço de volume em passo de 60 s: V += (Qin − Qout(t))·dt, com Qout(t) = a mesma agenda de etapas; cota por interpolação na CAV. Entradas: cota inicial (padrão 84,60 m), afluência (Qin, com presets Q inicial / 9,5 / descarga-alvo), horizonte (h), cota-limite de referência (83,77 m). Capacidade de referência da ficha: 12,17 hm³ na cota 84,60 m; acima disso a base tem interpolações/extrapolações (usar só para screening). 83,77 m é apenas piso energético teórico (seção normal do canal a 9,5 m³/s), NÃO é cota mínima operacional homologada. Status: Favorável (cota final > limite+0,15 m), Atenção (entre limite e limite+0,15), Crítico (≤ limite). Para cota estacionária, a afluência deve se aproximar da descarga total liberada.
+
+ESTRATÉGIA DE PREPARAÇÃO (fase prévia, independente da agenda): sistema cheio, linha antiga fechada, linha nova em regime permanente na vazão inicial. Se alguma comporta da linha nova estrangular em 2,0 m³/s, reposicionar do último para o primeiro: Juazeirinho → Serrote → Pirangi → Melancias → Mão Ruiva → Boa Vista, com hold point após cada abertura (padrão 10 min; observar níveis, pressões, ventosas, vibração antes de liberar a seguinte). Se as seis já estão abertas e estáveis, não remanobrar no dia: iniciar direto a programação. É proposta de engenharia, não procedimento oficial. Não equiparar % de abertura a vazão sem a curva da comporta/atuador; confirmar linha antiga isolada e linha nova cheia, sem bolsões de ar. O instante em que Curral atinge a vazão final não é automaticamente o início da medição oficial.
+
+PROTOCOLO: 1 preparação (conferir cheio, ventosas, níveis, vazamentos, isolamento); 2 regime reduzido estável (2 ou 3 m³/s); 3 programação controlada das etapas; seguido de checkpoints e registros. Solicitações ao consórcio: curvas das ventosas, curva das comportas/atuadores, dados as built, validação HAMMER.
+
+FORMATO DA RESPOSTA: texto em português claro. Use Markdown leve (títulos com ###, **negrito**, listas com '-', tabelas simples). NÃO use LaTeX nem o símbolo $. Escreva símbolos em Unicode e texto simples: ΔH, ΔQ, Pmin, m³/s, ≥, ≤. Seja conciso.
+
+COMO AJUDAR: explique o funcionamento, interprete resultados, compare cenários, aponte riscos e limitações, e sugira ajustes. Para PROPOR alteração de parâmetros no painel, ao final da resposta inclua um bloco exatamente assim (o usuário confirma antes de aplicar):
+\`\`\`acao
+{"q0":3,"qMeta":9.5,"withdrawal":0,"compensate":"1","defaultDQ":1,"defaultDT":30,"sifao":"boa","cavZ0":84.6,"cavQin":2,"cavHours":24,"cavLimit":83.77,"prepHold":10,"flowTime":12,"gerar":true}
+\`\`\`
+Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, mao, mel, pir, ser, jua (confira os ids em Sifões). "gerar":true regenera a agenda por ΔQ/Δt.`;
+ const f=(n,d=2)=>fmt(n,d);
+ function worst(){const tl=stageTimeline().slice(1);return siphons.map(s=>{let w=null;tl.forEach(e=>{const r=eventTransient(e,s);if(!w||r.pmin<w.pmin)w={...r,ev:e.index,q:e.q,dur:e.duration}});return {s,w}})}
+ function live(){
+  const st=getState(),tl=stageTimeline(),arr=arrivalFor(st.q0),sim=simulateCAVBalance(),last=tl.length>1?tl[tl.length-1]:tl[0];
+  const t=parseFloat($('flowTime')?.value||12);
+  let o=`ESTADO ATUAL DO PAINEL\nQ inicial ${f(st.q0,1)} m³/s; Q-meta ${f(st.qMeta,2)}; retirada agregada ${f(st.withdrawal,2)}; compensar: ${st.compensate?'sim':'não'}; Q necessária em Curral Velho ${f(st.requiredQ,2)} m³/s; ΔQ/Δt padrão ${$('defaultDQ').value} m³/s / ${$('defaultDT').value} min; sifão de análise: ${$('sifao').selectedOptions[0].text}.\n`;
+  o+=`AGENDA (${tl.length} etapas, duração total ${f(totalProgramMinutes(),0)} min = ${f(totalProgramMinutes()/60,1)} h): `+tl.map(e=>`#${e.index} início ${fmtClock(e.startMin)} Q=${f(e.q)} dur=${f(e.duration,0)}min ΔQ=${f(e.dq)}`).join(' | ')+'\n';
+  o+='SIFÕES (dados): '+siphons.map(s=>`${s.name}: km ${s.dist}, L_HAMMER ${s.length} m, L_POM ${s.pom_length} m, carga dinâmica ref ${s.dynamic} m, ΔH_base(9,5 m³/s; manobra 1…10,15,16 min)=${s.hammer.join('/')}`).join(' || ')+'\n';
+  o+='CHEGADA DA ONDA (h após o evento): '+siphons.map(s=>`${s.name} onda ${f(arr[s.name].wave_h,2)} / massa ${f(arr[s.name].mass_h,2)}`).join('; ')+'\n';
+  o+='PIOR EVENTO POR SIFÃO (menor Pmin): '+worst().filter(x=>x.w).map(x=>`${x.s.name}: etapa #${x.w.ev} (Q=${f(x.w.q)}, ${f(x.w.dur,0)} min) ΔH ${f(x.w.deltaH)} m, Pmin ${f(x.w.pmin)} m, ${x.w.risk}`).join('; ')+'\n';
+  o+=`SCREENING DO ÚLTIMO EVENTO (etapa ${last.index}, ΔQ ${f(last.dq||0)}): `+siphons.map(s=>{const r=eventTransient(last,s);return `${s.name}: ΔH ${f(r.deltaH)} m, Pmin ${f(r.pmin)} m, ${r.risk}`}).join('; ')+'\n';
+  o+='MATRIZ POR EVENTO (risco por sifão): '+tl.slice(1,41).map(e=>`#${e.index}(${f(e.q)}, ${f(e.duration,0)}min): `+siphons.map(s=>eventTransient(e,s).risk[0]).join('')).join(' | ')+' (ordem das letras: '+siphons.map(s=>s.name).join(', ')+'; F=Favorável, A=Atenção, C=Crítico)\n';
+  o+=`VAZÃO LOCAL ESTIMADA em t=${f(t,1)} h: `+siphons.map(s=>{const q=localFlowAtTime(t,s,st),ev=tl.slice(1),ch=ev.filter(e=>t*60>=e.startMin+arr[s.name].wave_h*60).length;return `${s.name} Q=${f(q)} m³/s (v tubo ${f(q/pipeArea)} m/s; ondas recebidas ${ch}/${ev.length})`}).join('; ')+'\n';
+  o+=`CAV CURRAL VELHO: cota inicial ${f(sim.z0)} m (vol ${f(sim.initial.vol/1e6,3)} hm³); Qin ${f(sim.qin)} m³/s; horizonte ${f(sim.horizon,0)} h; cota final ${f(sim.final.z)} m (Δz ${f(sim.dZ)} m; ΔV ${f(sim.dV/1e6,3)} hm³); cota mínima ${f(sim.minZ)} m; limite ${f(sim.limit)} m; ${sim.cross===null?'não cruza o limite no horizonte':'cruza o limite em ~'+f(sim.cross,1)+' h'}.\n`;
+  o+=`PREPARAÇÃO: hold point ${$('prepHold')?.value} min; retiradas ${$('prepWithdrawal')?.value} m³/s.`;
+  return o}
+ function local(q){const t=q.toLowerCase(),st=getState(),tl=stageTimeline(),last=tl.length>1?tl[tl.length-1]:tl[0],arr=arrivalFor(st.q0);
+  if(/transiente|screening|risco|golpe|ΔH|pmin|press/.test(t)){const w=worst().filter(x=>x.w).sort((a,b)=>a.w.pmin-b.w.pmin);return w.length?'Pior evento por sifão (menor Pmin), do mais ao menos crítico:\n'+w.map(x=>`${x.s.name}: etapa #${x.w.ev}, ΔH ${f(x.w.deltaH)} m, Pmin ${f(x.w.pmin)} m — ${x.w.risk}`).join('\n')+'\nResultado de screening; não é pressão transitória certificada.':'A agenda só tem a etapa inicial; adicione etapas para avaliar transientes.'}
+  if(/cav|cota|reservat|curral/.test(t)){const s=simulateCAVBalance();return `Curral Velho: cota inicial ${f(s.z0)} m → final ${f(s.final.z)} m (Δz ${f(s.dZ)} m), ΔV ${f(s.dV/1e6,3)} hm³ em ${f(s.horizon,0)} h com Qin ${f(s.qin)} m³/s. ${s.cross===null?'Não cruza':'Cruza'} a cota de referência de ${f(s.limit)} m${s.cross===null?'':' em ~'+f(s.cross,1)+' h'}.`}
+  if(/onda|chegada|tempo|propag/.test(t))return 'Chegada da onda após cada manobra (h):\n'+siphons.map(s=>`${s.name}: ${f(arr[s.name].wave_h)} (massa ${f(arr[s.name].mass_h)})`).join('\n');
+  if(/agenda|etapa|program|rampa/.test(t))return `Agenda com ${tl.length} etapas, ${f(totalProgramMinutes(),0)} min no total, de ${f(st.q0,1)} a ${f(tl[tl.length-1].q)} m³/s:\n`+tl.map(e=>`#${e.index} ${fmtClock(e.startMin)} — ${f(e.q)} m³/s por ${f(e.duration,0)} min`).join('\n');
+  return `Q inicial ${f(st.q0,1)}, meta ${f(st.qMeta)} (necessária em Curral ${f(st.requiredQ)} m³/s); ${tl.length} etapas em ${f(totalProgramMinutes(),0)} min. Para respostas completas e propostas de ajuste, informe uma chave de API no painel.`}
+ const fab=document.createElement('button');fab.id='aiFab';fab.textContent='Assistente';
+ const p=document.createElement('div');p.id='aiPanel';
+ p.innerHTML=`<div id="aiHead"><div>Assistente do painel<small>Conhece o sistema e o estado atual</small></div><button id="aiX" aria-label="Fechar">×</button></div>
+ <div id="aiCfg"><select id="aiProv"><option value="gemini">Gemini</option><option value="openai">OpenAI</option></select><input id="aiKey" type="password" placeholder="Chave de API (opcional)"><input id="aiModel" placeholder="Modelo (padrão: gemini-3.8-flash)" style="grid-column:1/3"></div>
+ <div id="aiMsgs"></div><div id="aiChips"></div><form id="aiForm"><input id="aiIn" placeholder="Pergunte sobre o painel, os resultados ou os riscos" autocomplete="off"><button type="submit">Enviar</button></form>`;
+ document.body.append(fab,p);
+ const msgs=$('aiMsgs'),add=(t,c)=>{const d=document.createElement('div');d.className='aiM '+c;if(c==='b')d.innerHTML=md(t);else d.textContent=t;msgs.append(d);msgs.scrollTop=1e9;return d};
+ ['Resuma o cenário atual','Quais sifões têm maior risco?','Como funciona o screening de transiente?','Cota do Curral Velho vai cruzar o limite?'].forEach(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;b.onclick=()=>{$('aiIn').value=x;$('aiForm').requestSubmit()};$('aiChips').append(b)});
+ const key=()=>localStorage.getItem('sif_ai_'+$('aiProv').value)||'';
+ $('aiProv').value=localStorage.getItem('sif_ai_prov')||'gemini';$('aiKey').value=key();$('aiModel').value=localStorage.getItem('sif_ai_model')||'';
+ $('aiProv').onchange=()=>{localStorage.setItem('sif_ai_prov',$('aiProv').value);$('aiKey').value=key()};
+ $('aiKey').onchange=()=>localStorage.setItem('sif_ai_'+$('aiProv').value,$('aiKey').value.trim());
+ $('aiModel').onchange=()=>localStorage.setItem('sif_ai_model',$('aiModel').value.trim());
+ fab.onclick=()=>p.classList.toggle('open');$('aiX').onclick=()=>p.classList.remove('open');
+ add('Conheço a lógica do painel, os dados dos seis sifões e o estado atual. Posso explicar resultados, comparar cenários e propor ajustes de parâmetros, que você confirma antes de aplicar. Sem chave de API, respondo só com cálculos locais.','b');
+ const hist=[];
+ async function ask(q){const k=key(),prov=$('aiProv').value;if(!k)return local(q);
+  const sys=KB+'\n\n'+live();
+  try{if(prov==='gemini'){const m=$('aiModel').value.trim()||'gemini-3.8-flash';
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(m)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k.replace(/[^\x21-\x7e]/g,'')},body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[...hist.map(h=>({role:h.r==='u'?'user':'model',parts:[{text:h.t}]})),{role:'user',parts:[{text:q}]}]})});
+    const j=await r.json();return j.candidates?.[0]?.content?.parts?.[0]?.text||('Erro '+(j.error?.code||'')+': '+(j.error?.message||'sem resposta')+(r.status===401||r.status===403||r.status===400?'\n\nConfira a chave: gerada em aistudio.google.com/apikey, copiada inteira e sem espaços.':''))}
+   const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:$('aiModel').value.trim()||'gpt-4o-mini',messages:[{role:'system',content:sys},...hist.map(h=>({role:h.r==='u'?'user':'assistant',content:h.t})),{role:'user',content:q}]})});
+   const j=await r.json();return j.choices?.[0]?.message?.content||('Erro: '+(j.error?.message||'sem resposta'))}
+  catch(e){return 'Falha na conexão com a API. Resposta local:\n'+local(q)}}
+ const OK={q0:v=>[2,3,4].includes(+v),qMeta:v=>+v>0&&+v<30,withdrawal:v=>+v>=0&&+v<10,compensate:v=>['0','1'].includes(String(v)),defaultDQ:v=>+v>0&&+v<10,defaultDT:v=>+v>=1&&+v<600,sifao:v=>siphons.some(s=>s.id===v),cavZ0:v=>+v>=74.1&&+v<=89.1,cavQin:v=>+v>=0&&+v<=25,cavHours:v=>+v>=1&&+v<=240,cavLimit:v=>+v>=74.1&&+v<=89.1,prepHold:v=>+v>=1&&+v<=120,prepWithdrawal:v=>+v>=0&&+v<10,flowTime:v=>+v>=0&&+v<=500};
+ function apply(a){const done=[];let g=false;Object.keys(a).forEach(k=>{if(k==='gerar'){g=!!a[k];return}if(!OK[k]||!OK[k](a[k])||!$(k))return;
+   if(k==='cavQin'&&$('cavPreset'))$('cavPreset').value='manual';
+   $(k).value=String(a[k]);$(k).dispatchEvent(new Event('input',{bubbles:true}));done.push(k+'='+a[k])});
+  if(g&&typeof generateProgram==='function'){generateProgram();done.push('agenda regenerada')}
+  if(typeof updateCAV==='function')updateCAV();if(typeof updatePrepModule==='function')updatePrepModule();if(typeof updateAllSiphonFlows==='function')updateAllSiphonFlows();
+  return done}
+ $('aiForm').onsubmit=async e=>{e.preventDefault();const q=$('aiIn').value.trim();if(!q)return;$('aiIn').value='';$('aiChips').style.display='none';add(q,'u');const w=add('…','b');
+  let ans=await ask(q);hist.push({r:'u',t:q},{r:'b',t:ans});if(hist.length>16)hist.splice(0,2);
+  const m=ans.match(/```acao\s*([\s\S]*?)```/);ans=ans.replace(/```acao[\s\S]*?```/g,'').trim();w.innerHTML=md(ans||'Alteração proposta abaixo.');
+  if(m){let a=null;try{a=JSON.parse(m[1])}catch(x){}
+   if(a){const box=document.createElement('div');box.className='aiAct';box.innerHTML='<b>Alteração proposta</b><br>'+Object.keys(a).map(k=>k+' = '+a[k]).join('<br>')+'<br>';
+    const b=document.createElement('button');b.textContent='Aplicar no painel';b.onclick=()=>{const d=apply(a);b.disabled=true;b.textContent='Aplicado';add(d.length?'Aplicado: '+d.join(', ')+'.':'Nenhum valor válido para aplicar.','b')};box.append(b);msgs.append(box);msgs.scrollTop=1e9}}};
+ window.__sifAI={live,apply,local};
+})();
+</script>
+</body></html>
