@@ -81,6 +81,12 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 #aiFab{position:fixed;right:22px;bottom:22px;z-index:1000;background:linear-gradient(135deg,#005a8d,#0a2340);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px rgba(10,35,64,.35)}
 #aiPanel{position:fixed;right:22px;bottom:80px;z-index:1000;width:430px;max-width:calc(100vw - 28px);height:600px;max-height:calc(100vh - 110px);display:none;flex-direction:column;background:#fff;border:1px solid #bfd2df;border-radius:16px;box-shadow:0 20px 50px rgba(10,35,64,.3);overflow:hidden}
 #aiPanel.open{display:flex}
+#aiPanel.minimized{height:52px!important;min-height:52px;max-height:52px;overflow:hidden}
+#aiPanel.minimized #aiCfg,#aiPanel.minimized #aiMsgs,#aiPanel.minimized #aiChips,#aiPanel.minimized #aiForm{display:none!important}
+#aiHead{touch-action:none;cursor:move;user-select:none}
+#aiHead button{touch-action:manipulation;cursor:pointer}
+#aiActions{display:flex;align-items:center;gap:8px}
+#aiPanel.minimized #aiHead{height:52px}
 #aiHead{background:linear-gradient(120deg,#0a2340,#005a8d);color:#fff;padding:13px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 #aiHead small{display:block;font-weight:400;opacity:.8;font-size:12px}
 #aiHead button{background:none;border:0;color:#fff;font-size:20px;cursor:pointer}
@@ -861,10 +867,17 @@ Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, 
   let o=`ESTADO ATUAL DO PAINEL\nQ inicial ${f(st.q0,1)} m³/s; Q-meta ${f(st.qMeta,2)}; retirada agregada ${f(st.withdrawal,2)}; compensar: ${st.compensate?'sim':'não'}; Q necessária em Curral Velho ${f(st.requiredQ,2)} m³/s; ΔQ/Δt padrão ${$('defaultDQ').value} m³/s / ${$('defaultDT').value} min; sifão de análise: ${$('sifao').selectedOptions[0].text}.\n`;
   o+=`AGENDA (${tl.length} etapas, duração total ${f(totalProgramMinutes(),0)} min = ${f(totalProgramMinutes()/60,1)} h): `+tl.map(e=>`#${e.index} início ${fmtClock(e.startMin)} Q=${f(e.q)} dur=${f(e.duration,0)}min ΔQ=${f(e.dq)}`).join(' | ')+'\n';
   o+='SIFÕES (dados): '+siphons.map(s=>`${s.name}: km ${s.dist}, L_HAMMER ${s.length} m, L_POM ${s.pom_length} m, carga dinâmica ref ${s.dynamic} m, ΔH_base(9,5 m³/s; manobra 1…10,15,16 min)=${s.hammer.join('/')}`).join(' || ')+'\n';
-  o+='CHEGADA DA ONDA (h após o evento): '+siphons.map(s=>`${s.name} onda ${f(arr[s.name].wave_h,2)} / massa ${f(arr[s.name].mass_h,2)}`).join('; ')+'\n';
+  o+='CHEGADA DA ONDA (h após o evento; cinemática @ Q-meta): '+siphons.map(s=>`${s.name} onda ${f(arr[s.name].wave_h,2)} / massa ${f(arr[s.name].mass_h,2)} / cinemática ${f(kinematicHours(s,st.qMeta),2)}`).join('; ')+'\n';
   o+='PIOR EVENTO POR SIFÃO (menor Pmin): '+worst().filter(x=>x.w).map(x=>`${x.s.name}: etapa #${x.w.ev} (Q=${f(x.w.q)}, ${f(x.w.dur,0)} min) ΔH ${f(x.w.deltaH)} m, Pmin ${f(x.w.pmin)} m, ${x.w.risk}`).join('; ')+'\n';
   o+=`SCREENING DO ÚLTIMO EVENTO (etapa ${last.index}, ΔQ ${f(last.dq||0)}): `+siphons.map(s=>{const r=eventTransient(last,s);return `${s.name}: ΔH ${f(r.deltaH)} m, Pmin ${f(r.pmin)} m, ${r.risk}`}).join('; ')+'\n';
   o+='MATRIZ POR EVENTO (risco por sifão): '+tl.slice(1,41).map(e=>`#${e.index}(${f(e.q)}, ${f(e.duration,0)}min): `+siphons.map(s=>eventTransient(e,s).risk[0]).join('')).join(' | ')+' (ordem das letras: '+siphons.map(s=>s.name).join(', ')+'; F=Favorável, A=Atenção, C=Crítico)\n';
+  o+='TRANSIENTES NUMÉRICOS POR ETAPA (screening, não certificação; ΔH e Pmin em m): '+(tl.length>1?tl.slice(1).map(e=>'#'+e.index+' (t='+f(e.startMin/60,2)+'h, Q='+f(e.q)+' m³/s, ΔQ='+f(e.dq)+' m³/s): '+siphons.map(s=>{const r=eventTransient(e,s);return s.name+'(ΔH='+f(r.deltaH)+', Pmin='+f(r.pmin)+', '+r.risk+')'}).join(', ')).join(' | '):'nenhuma manobra após o regime inicial')+'\n';
+  const chInicial=solveChannel(st.q0),chMeta=solveChannel(st.qMeta);
+  o+='CANAL REGIME (Manning: b=5 m, z=1,5 H:1 V, n=1/70, S=0,00015): lâmina normal @ Q0='+f(chInicial.y)+' m (v='+f(chInicial.V)+' m/s); lâmina normal @ Q-meta='+f(chMeta.y)+' m (v='+f(chMeta.V)+' m/s); borda livre mínima: não determinada, falta altura física de coroamento validada.\n';
+  const fimRampaH=(tl.length>1?tl[tl.length-1].startMin:0)/60;
+  const amostraCAV=(hora)=>sim.series.reduce((best,p)=>Math.abs(p.h-hora)<Math.abs(best.h-hora)?p:best,sim.series[0]);
+  const minAmostra=sim.series.reduce((best,p)=>p.z<best.z-1e-9?p:best,sim.series[0]);
+  o+='CAV TRAJETÓRIA: Q final atingida em t='+f(fimRampaH,2)+' h (início da última etapa); '+(fimRampaH<=sim.horizon?'cota nesse instante='+f(amostraCAV(fimRampaH).z)+' m':'cota indisponível: instante além do horizonte CAV')+'; cota mínima='+f(minAmostra.z)+' m em t='+f(minAmostra.h,2)+' h. Valores amostrados a cada 10 minutos.\n';
   o+=`VAZÃO LOCAL ESTIMADA em t=${f(t,1)} h: `+siphons.map(s=>{const q=localFlowAtTime(t,s,st),ev=tl.slice(1),ch=ev.filter(e=>t*60>=e.startMin+arr[s.name].wave_h*60).length;return `${s.name} Q=${f(q)} m³/s (v tubo ${f(q/pipeArea)} m/s; ondas recebidas ${ch}/${ev.length})`}).join('; ')+'\n';
   o+=`CAV CURRAL VELHO: cota inicial ${f(sim.z0)} m (vol ${f(sim.initial.vol/1e6,3)} hm³); Qin ${f(sim.qin)} m³/s; horizonte ${f(sim.horizon,0)} h; cota final ${f(sim.final.z)} m (Δz ${f(sim.dZ)} m; ΔV ${f(sim.dV/1e6,3)} hm³); cota mínima ${f(sim.minZ)} m; limite ${f(sim.limit)} m; ${sim.cross===null?'não cruza o limite no horizonte':'cruza o limite em ~'+f(sim.cross,1)+' h'}.\n`;
   o+=`PREPARAÇÃO: hold point ${$('prepHold')?.value} min; retiradas ${$('prepWithdrawal')?.value} m³/s.`;
@@ -877,7 +890,7 @@ Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, 
   return `Q inicial ${f(st.q0,1)}, meta ${f(st.qMeta)} (necessária em Curral ${f(st.requiredQ)} m³/s); ${tl.length} etapas em ${f(totalProgramMinutes(),0)} min. Para respostas completas e propostas de ajuste, informe uma chave de API no painel.`}
  const fab=document.createElement('button');fab.id='aiFab';fab.textContent='Assistente';
  const p=document.createElement('div');p.id='aiPanel';
- p.innerHTML=`<div id="aiHead"><div>Assistente do painel<small>Conhece o sistema e o estado atual</small></div><button id="aiX" aria-label="Fechar">×</button></div>
+ p.innerHTML=`<div id="aiHead"><div>Assistente do painel<small>Conhece o sistema e o estado atual</small></div><div id="aiActions"><button id="aiMin" type="button" aria-label="Minimizar assistente" title="Minimizar">−</button><button id="aiX" type="button" aria-label="Fechar">×</button></div></div>
  <div id="aiCfg"><select id="aiProv"><option value="gemini">Gemini</option><option value="openai">OpenAI</option></select><input id="aiKey" type="password" placeholder="Chave de API (opcional)"><input id="aiModel" placeholder="Modelo (padrão: gemini-3.8-flash)" style="grid-column:1/3"></div>
  <div id="aiMsgs"></div><div id="aiChips"></div><form id="aiForm"><input id="aiIn" placeholder="Pergunte sobre o painel, os resultados ou os riscos" autocomplete="off"><button type="submit">Enviar</button></form>`;
  document.body.append(fab,p);
@@ -888,7 +901,50 @@ Inclua apenas as chaves que mudam. q0 só aceita 2, 3 ou 4. "sifao" aceita boa, 
  $('aiProv').onchange=()=>{localStorage.setItem('sif_ai_prov',$('aiProv').value);$('aiKey').value=key()};
  $('aiKey').onchange=()=>localStorage.setItem('sif_ai_'+$('aiProv').value,$('aiKey').value.trim());
  $('aiModel').onchange=()=>localStorage.setItem('sif_ai_model',$('aiModel').value.trim());
- fab.onclick=()=>p.classList.toggle('open');$('aiX').onclick=()=>p.classList.remove('open');
+ const minBtn=$('aiMin'),head=$('aiHead');
+ function keepVisible(){
+   if(!p.classList.contains('open'))return;
+   const r=p.getBoundingClientRect(),margin=8;
+   const x=Math.min(Math.max(margin,r.left),Math.max(margin,innerWidth-r.width-margin));
+   const y=Math.min(Math.max(margin,r.top),Math.max(margin,innerHeight-r.height-margin));
+   p.style.left=x+'px';p.style.top=y+'px';p.style.right='auto';p.style.bottom='auto';
+ }
+ function moveToStored(){
+   try{const xy=JSON.parse(localStorage.getItem('simulat4_ai_position')||'null');if(xy&&Number.isFinite(xy.x)&&Number.isFinite(xy.y)){p.style.left=xy.x+'px';p.style.top=xy.y+'px';p.style.right='auto';p.style.bottom='auto';}}catch(e){}
+   requestAnimationFrame(keepVisible);
+ }
+ minBtn.onclick=()=>{
+   p.classList.toggle('minimized');const minimized=p.classList.contains('minimized');
+   minBtn.textContent=minimized?'□':'−';minBtn.title=minimized?'Restaurar':'Minimizar';minBtn.setAttribute('aria-label',minBtn.title);
+   requestAnimationFrame(keepVisible);
+ };
+ fab.onclick=()=>{p.classList.toggle('open');if(p.classList.contains('open'))moveToStored()};
+ $('aiX').onclick=()=>p.classList.remove('open');
+ let drag=null;
+ head.addEventListener('pointerdown',ev=>{
+   if(ev.button!==0&&ev.pointerType==='mouse')return;
+   if(ev.target.closest('button'))return;
+   const rect=p.getBoundingClientRect();
+   drag={id:ev.pointerId,x:ev.clientX-rect.left,y:ev.clientY-rect.top};
+   head.setPointerCapture(ev.pointerId);
+   ev.preventDefault();
+ });
+ head.addEventListener('pointermove',ev=>{
+   if(!drag||drag.id!==ev.pointerId)return;
+   const margin=8,w=p.offsetWidth,h=p.offsetHeight;
+   const x=Math.max(margin,Math.min(ev.clientX-drag.x,Math.max(margin,innerWidth-w-margin)));
+   const y=Math.max(margin,Math.min(ev.clientY-drag.y,Math.max(margin,innerHeight-h-margin)));
+   p.style.left=x+'px';p.style.top=y+'px';p.style.right='auto';p.style.bottom='auto';
+ });
+ function stopDrag(ev){
+   if(!drag||ev.pointerId!==drag.id)return;
+   drag=null;
+   const rect=p.getBoundingClientRect();
+   try{localStorage.setItem('simulat4_ai_position',JSON.stringify({x:rect.left,y:rect.top}))}catch(e){}
+ }
+ head.addEventListener('pointerup',stopDrag);
+ head.addEventListener('pointercancel',stopDrag);
+ window.addEventListener('resize',()=>requestAnimationFrame(keepVisible));
  add('Conheço a lógica do painel, os dados dos seis sifões e o estado atual. Posso explicar resultados, comparar cenários e propor ajustes de parâmetros, que você confirma antes de aplicar. Sem chave de API, respondo só com cálculos locais.','b');
  const hist=[];
  async function ask(q){const k=key(),prov=$('aiProv').value;if(!k)return local(q);
