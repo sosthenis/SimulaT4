@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<title>COGERH | Painel Técnico — Sifões Lote 4 · V7.2 · Operação por etapas + propagação/transientes</title>
+<title>COGERH | Painel Técnico — Sifões Lote 4 · V7.0 · Operação por etapas + propagação/transientes</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 <style>
 :root{--blue:#005a8d;--deep:#0a2340;--cyan:#34c3ff;--gold:#f0c24b;--bg:#f2f7fb;--panel:#fff;--line:#d8e4ec;--text:#193347;--muted:#607685;--shadow:0 12px 28px rgba(20,64,89,.11)}
@@ -77,20 +77,6 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 @media(max-width:1200px){.program-controls,.spec-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.program-controls,.spec-grid{grid-template-columns:1fr}.program-table input{width:80px}}
 
-/* V7.2 — retiradas compactas + animação 3 frentes */
-.withdraw-grid{display:grid;grid-template-columns:repeat(4,minmax(165px,1fr));gap:10px;margin:10px 0}
-.withdraw-grid label{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;font-size:12px;font-weight:800;color:#4f6978}
-.withdraw-grid input{width:112px;max-width:112px;min-width:92px;padding:6px 7px;border:1px solid #bfd2df;border-radius:8px;background:#fff;text-align:right}
-.anim-legend3{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.anim-legend3 span{display:inline-flex;align-items:center;gap:7px;border:1px solid #d4e3eb;background:#fff;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;color:#365061}
-.anim-legend3 i{display:inline-block;width:22px;height:5px;border-radius:999px}
-.anim-legend3 .wave i{background:#1fc8ff}.anim-legend3 .kin i{background:#f0c24b}.anim-legend3 .adv i{background:#59c985}
-.anim-explain{margin-top:10px;padding:11px 13px;border:1px solid #d8e4ec;border-radius:11px;background:#f8fbfd;color:#476172;font-size:12.5px}
-.anim-explain strong{color:#0a2340}
-@media(max-width:1200px){.withdraw-grid{grid-template-columns:repeat(2,minmax(165px,1fr))}}
-@media(max-width:760px){.withdraw-grid{grid-template-columns:1fr}.withdraw-grid input{width:105px;max-width:105px}}
-
-
 
 #aiFab{position:fixed;right:22px;bottom:22px;z-index:1000;background:linear-gradient(135deg,#005a8d,#0a2340);color:#fff;border:0;border-radius:999px;padding:13px 22px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px rgba(10,35,64,.35)}
 #aiPanel{position:fixed;right:22px;bottom:80px;z-index:1000;width:430px;max-width:calc(100vw - 28px);height:600px;max-height:calc(100vh - 110px);display:none;flex-direction:column;background:#fff;border:1px solid #bfd2df;border-radius:16px;box-shadow:0 20px 50px rgba(10,35,64,.3);overflow:hidden}
@@ -118,12 +104,11 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 .aiM.b{white-space:normal}.aiM .aiH{font-weight:700;margin:6px 0 3px}.aiM .aiL{margin:2px 0}.aiM .aiSp{height:6px}.aiM hr{border:0;border-top:1px solid #bfd2df;margin:8px 0}
 .aiM table.aiT{border-collapse:collapse;margin:6px 0;font-size:13px;display:block;overflow-x:auto}.aiM .aiT th,.aiM .aiT td{border:1px solid #bfd2df;padding:4px 8px;text-align:left}.aiM .aiT th{background:#d8e8f2}.aiM code{background:#dbe8f1;padding:0 4px;border-radius:4px}
 </style>
-<!-- build-refresh: 2026-10-13 22:28 BRT -->
 </head>
 <body>
 <header class="top">
   <div class="brand"><div class="ce">CE</div><div><div class="title1">GOVERNO DO ESTADO DO CEARÁ</div><div class="brandname">COGERH <span>Companhia de Gestão dos Recursos Hídicos</span></div></div></div>
-  <div class="pills"><span class="pill b">Painel técnico</span><span class="pill">Premissa revisada</span><span class="pill g">Sistema cheio · linha antiga fechada · linha nova em 2 ou 3 m³/s</span><span class="pill b">V7.2 · animação 3 frentes + retiradas C1–C7</span></div>
+  <div class="pills"><span class="pill b">Painel técnico</span><span class="pill">Premissa revisada</span><span class="pill g">Sistema cheio · linha antiga fechada · linha nova em 2 ou 3 m³/s</span><span class="pill b">V7.0 · operação por etapas + propagação/transientes</span></div>
 </header>
 <section class="hero">
   <div class="hero-grid">
@@ -259,7 +244,7 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 <div class="program-controls">
 <div class="ctrl"><label><span>Vazão inicial</span><b id="q0lbl">2,0 m³/s</b></label><select id="q0"><option value="2">2,0 m³/s</option><option value="3">3,0 m³/s</option><option value="4">4,0 m³/s</option></select></div>
 <div class="ctrl"><label><span>Q-meta requerida</span><b id="qMetaLbl">9,5 m³/s</b></label><input id="qMeta" type="number" min="0.1" step="0.1" value="9.5"></div>
-<div class="ctrl" style="grid-column:1/-1"><details open><summary>Retiradas por Trecho de Canal — <b id="wLbl">0,00 m³/s</b></summary><div class="withdraw-grid"><label>C1 — Curral Velho–Boa Vista<input id="withdraw_c1" type="number" min="0" step="0.05" value="0" /></label><label>C2 — Boa Vista–Mão Ruiva<input id="withdraw_c2" type="number" min="0" step="0.05" value="0" /></label><label>C3 — Mão Ruiva–Melancias<input id="withdraw_c3" type="number" min="0" step="0.05" value="0" /></label><label>C4 — Melancias–Pirangi<input id="withdraw_c4" type="number" min="0" step="0.05" value="0" /></label><label>C5 — Pirangi–Serrote<input id="withdraw_c5" type="number" min="0" step="0.05" value="0" /></label><label>C6 — Serrote–Juazeirinho<input id="withdraw_c6" type="number" min="0" step="0.05" value="0" /></label><label>C7 — Jusante de Juazeirinho<input id="withdraw_c7" type="number" min="0" step="0.05" value="0" /></label></div><b>ΣQ retiradas: <span id="withdrawalsTotal">0,00 m³/s</span></b><div id="withdrawalWarnings" style="color:#a13a19" aria-live="polite"></div></details></div>
+<div class="ctrl" style="grid-column:1/-1"><details open><summary>Retiradas por Trecho de Canal — <b id="wLbl">0,00 m³/s</b></summary><div class="grid2"><label>C1 — Curral Velho–Boa Vista<input id="withdraw_c1" type="number" min="0" step="0.05" value="0" /></label><label>C2 — Boa Vista–Mão Ruiva<input id="withdraw_c2" type="number" min="0" step="0.05" value="0" /></label><label>C3 — Mão Ruiva–Melancias<input id="withdraw_c3" type="number" min="0" step="0.05" value="0" /></label><label>C4 — Melancias–Pirangi<input id="withdraw_c4" type="number" min="0" step="0.05" value="0" /></label><label>C5 — Pirangi–Serrote<input id="withdraw_c5" type="number" min="0" step="0.05" value="0" /></label><label>C6 — Serrote–Juazeirinho<input id="withdraw_c6" type="number" min="0" step="0.05" value="0" /></label><label>C7 — Jusante de Juazeirinho<input id="withdraw_c7" type="number" min="0" step="0.05" value="0" /></label></div><b>ΣQ retiradas: <span id="withdrawalsTotal">0,00 m³/s</span></b><div id="withdrawalWarnings" style="color:#a13a19" aria-live="polite"></div></details></div>
 <div class="ctrl"><label><span>Compensar retirada?</span><b id="compLbl">Sim</b></label><select id="compensate"><option value="1">Sim</option><option value="0">Não</option></select></div>
 <div class="ctrl"><label><span>ΔQ padrão</span><b id="dqLbl">1,0 m³/s</b></label><input id="defaultDQ" type="number" min="0.05" step="0.05" value="1"></div>
 <div class="ctrl"><label><span>Δt padrão</span><b id="dtLbl">30 min</b></label><input id="defaultDT" type="number" min="1" step="1" value="30"></div>
@@ -268,7 +253,7 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
 <div class="program-actions"><button class="btn active" id="generateProgram">Gerar sequência até Q necessária</button><button class="btn" id="addStage">+ Adicionar etapa</button><button class="btn danger" id="resetProgram">Restaurar exemplo</button><button class="btn" id="exportSpatialJSON" type="button">Exportar JSON C1–C7</button><span class="muted">Após gerar, edite livremente Q e duração de qualquer etapa.</span></div>
 <div class="sub"><h3 style="margin-top:0">Agenda operacional editável</h3><div class="table-scroll"><table class="program-table"><thead><tr><th>Etapa</th><th>Início</th><th>Q comandada (m³/s)</th><th>Duração até próxima manobra (min)</th><th>ΔQ (m³/s)</th><th>dQ/dt médio</th><th>Ação</th></tr></thead><tbody id="programTable"></tbody></table></div></div>
 <div class="results" id="simResultsTop"></div><div class="results" id="simResultsBottom"></div>
-<div class="sub"><h3>Implicações automáticas</h3><div id="implications"></div></div>
+<div class="grid2"><div class="sub"><h3>Implicações automáticas</h3><div id="implications"></div></div><div class="sub"><h3>Propagação da primeira perturbação</h3><table><thead><tr><th>Sifão</th><th>Onda dinâmica</th><th>Advecção inicial</th><th>Cinemática @ Q-meta</th></tr></thead><tbody id="arrivalTable"></tbody></table></div></div>
 </section>
 
     <section class="panel" id="vazoes6">
@@ -322,14 +307,14 @@ footer{max-width:1700px;margin:0 auto 24px;padding:0 18px;color:#617788;font-siz
       <div class="info"><strong>Critério operacional sugerido:</strong> abrir uma comporta, observar níveis/pressões/ventosas/vibração e somente então liberar a abertura seguinte. Depois de Boa Vista, manter todas as seis abertas em regime reduzido, confirmar estabilidade global e só então iniciar a programação em Curral Velho. O instante em que Curral Velho atinge a vazão final programada <strong>não é automaticamente o início da medição oficial</strong>; a medição deve aguardar a estabilização no sifão avaliado.</div>
     </section>
 
-    <section class="panel" id="onda"><div class="sec-head"><div class="sec-title"><div class="badgeN">4</div><h2>Animação hidráulica — açude → canal → sifões</h2></div><div class="muted">visual 3D esquemático · três frentes hidráulicas</div></div><div class="chart"><svg id="animSvg" viewBox="0 0 1280 430"></svg></div><div class="anim-legend3"><span class="wave"><i></i>1º Onda dinâmica</span><span class="kin"><i></i>2º Cinemática @ Q-meta</span><span class="adv"><i></i>3º Advecção inicial</span></div><div class="anim-controls" style="margin-top:10px"><button class="btn" id="playAnim">▶ Reproduzir</button><button class="btn" id="pauseAnim">⏸ Pausar</button><button class="btn" id="resetAnim">↺ Reiniciar</button><span id="animText" class="muted">As três cores percorrem o mesmo sistema com velocidades distintas.</span></div><div class="anim-explain"><strong>Como ler:</strong> azul = onda dinâmica (perturbação chega primeiro); amarelo = cinemática @ Q-meta (resposta hidráulica intermediária); verde = advecção inicial (transporte da massa d'água, mais lento). O painel mostra distância e velocidade de cada frente durante a animação.</div><div class="info">Representação operacional de screening: as três frentes partem do <strong>Açude Curral Velho</strong> e percorrem o sistema até <strong>Juazeirinho</strong>. A visualização mostra a ordem relativa e os tempos calculados pelo painel; não substitui Saint-Venant/MOC/HAMMER.</div></section>
+    <section class="panel" id="onda"><div class="sec-head"><div class="sec-title"><div class="badgeN">4</div><h2>Animação hidráulica — açude → canal → sifões</h2></div><div class="muted">filme simplificado da água saindo do Curral Velho e chegando aos sifões</div></div><div class="chart"><svg id="animSvg" viewBox="0 0 1280 360"></svg></div><div class="anim-controls" style="margin-top:10px"><button class="btn" id="playAnim">▶ Reproduzir</button><button class="btn" id="pauseAnim">⏸ Pausar</button><button class="btn" id="resetAnim">↺ Reiniciar</button><span id="animText" class="muted">A frente azul representa a propagação da condição de teste ao longo do sistema. Cada sifão é destacado quando a perturbação/onda o alcança.</span></div><div class="info">A animação está coerente com a nova premissa: o sistema já está cheio, a linha antiga está fechada e a onda operacional é produzida pela elevação de vazão na <strong>linha nova</strong>, partindo do <strong>Açude Curral Velho</strong>, atravessando a condição de contorno do <strong>Sifão Palhano</strong> e atingindo, em sequência, <strong>Boa Vista</strong>, <strong>Mão Ruiva</strong>, <strong>Melancias</strong>, <strong>Pirangi</strong>, <strong>Serrote</strong> e <strong>Juazeirinho</strong>.</div></section>
     <section class="panel" id="graficos"><div class="sec-head"><div class="sec-title"><div class="badgeN">5</div><h2>Gráficos e comparações</h2></div><div class="muted">efeitos das etapas em regime cheio</div></div><div class="grid2"><div class="chart"><h3 style="margin-top:0">ΔH de screening por sifão</h3><svg id="barChart" viewBox="0 0 620 340"></svg></div><div class="chart"><h3 style="margin-top:0">Q local estimada ao longo do tempo</h3><svg id="flowChart" viewBox="0 0 620 340"></svg></div></div></section>
     <section class="panel matrix" id="matriz"><div class="sec-head"><div class="sec-title"><div class="badgeN">6</div><h2>Matriz de eventos e transientes</h2></div><div class="muted">screening evento-a-evento no sifão selecionado</div></div><div class="sub"><table id="matrixTable"></table></div></section>
     <section class="panel" id="protocolo"><div class="sec-head"><div class="sec-title"><div class="badgeN">7</div><h2>Protocolo operacional revisado</h2></div><div class="muted">passo a passo para o novo procedimento</div></div><div class="timeline"><div class="step"><div class="n">1</div><h4>Preparação</h4><p>Conferir que canal, sifões e nova linha estão cheios; verificar ventosas, níveis, vazamentos e isolamento da linha antiga.</p></div><div class="step"><div class="n">2</div><h4>Regime reduzido</h4><p>Manter a nova linha operando de forma estável com 2,0 ou 3,0 m³/s, com registros de nível e eventuais retiradas intermediárias.</p></div><div class="step"><div class="n">3</div><h4>Programação controlada</h4><p>Executar a agenda de etapas em Curral Velho, respeitando Q e duração definidas para cada evento e compensando retiradas quando aplicável.</p></div><div class="step"><div class="n">4</div><h4>Estabilização</h4><p>Aguardar a propagação da condição hidráulica e a estabilização local no sifão alvo antes da medição oficial.</p></div></div><div class="grid2"><div class="sub"><h3>Cuidados adicionais</h3><ul class="tight"><li>Documentar a comprovação da condição cheia e desaerada.</li><li>Adotar sequência coerente e documentar qualquer aumento, redução ou pausa operacional.</li><li>Evitar saltos bruscos de abertura/fechamento.</li><li>Se houver retirada intermediária, explicitar se foi ou não compensada.</li><li>Medir preferencialmente a jusante para comprovar a passagem efetiva da vazão pela estrutura.</li></ul></div><div class="sub"><h3>O que solicitar ao consórcio</h3><ul class="tight"><li>Confirmação formal de que a linha antiga pode permanecer fechada com água em segurança.</li><li>Procedimento específico para verificação de linha cheia e ausência de ar aprisionado.</li><li>Curvas abertura×vazão das comportas de Curral Velho e limites dos atuadores; curvas de admissão/expulsão das ventosas.</li><li>Modelo/checagem de transientes considerando a agenda real de etapas, inclusive Q inicial de 2/3/4 m³/s e vazões finais acima de 9,5 m³/s quando aplicável.</li><li>Plano de contingência para abortagem, esvaziamento controlado e retomada.</li></ul></div></div></section>
     <section class="panel" id="dossie"><div class="sec-head"><div class="sec-title"><div class="badgeN">8</div><h2>Dossiê técnico operacional revisado</h2></div><div class="muted">arquivos gerados a partir da nova premissa</div></div><p class="muted">Foram gerados um novo dossiê em DOCX e PDF, estruturados especificamente para os dois cenários-base: <strong>2,0 → 9,5 m³/s</strong> e <strong>3,0 → 9,5 m³/s</strong>, destacando implicações hidráulicas, protocolo revisado, riscos, tabelas e solicitações ao consórcio.</p><div class="doc-links"><a href="Analise_Tecnica_Revisada_Teste_Sifoes_Lote4.docx">Abrir análise técnica revisada (DOCX)</a><a href="cav_curral_velho.csv">Abrir base CAV (CSV)</a></div></section>
   </main>
 </div>
-<footer><div>Versão V7.2 · programação por etapas + CAV + animação 3 frentes + screening de transientes</div><div>Base: POM T2/T3, CAV Curral Velho, KMZ, nota HAMMER de transientes e metodologia de medição</div></footer>
+<footer><div>Versão V7.0 · programação por etapas + CAV + propagação + screening de transientes</div><div>Base: POM T2/T3, CAV Curral Velho, KMZ, nota HAMMER de transientes e metodologia de medição</div></footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
 const cavData = [{"z":74.1,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.2,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.3,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.4,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.5,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.6,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.7,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.8,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":74.9,"area":0.0,"vol":0.0,"pct":0.0,"origem":"interp."},{"z":75.0,"area":0.0,"vol":0.0,"pct":0.0,"origem":"ficha"},{"z":75.1,"area":0.0004,"vol":127.0,"pct":0.0,"origem":"interp."},{"z":75.2,"area":0.0017,"vol":498.0,"pct":0.0,"origem":"interp."},{"z":75.3,"area":0.0037,"vol":1096.0,"pct":0.01,"origem":"interp."},{"z":75.4,"area":0.0064,"vol":1905.0,"pct":0.02,"origem":"interp."},{"z":75.5,"area":0.0095,"vol":2909.0,"pct":0.02,"origem":"interp."},{"z":75.6,"area":0.0132,"vol":4093.0,"pct":0.03,"origem":"interp."},{"z":75.7,"area":0.0171,"vol":5440.0,"pct":0.04,"origem":"interp."},{"z":75.8,"area":0.0213,"vol":6934.0,"pct":0.06,"origem":"interp."},{"z":75.9,"area":0.0256,"vol":8560.0,"pct":0.07,"origem":"interp."},{"z":76.0,"area":0.03,"vol":10300.0,"pct":0.08,"origem":"ficha"},{"z":76.1,"area":0.0349,"vol":12796.0,"pct":0.11,"origem":"interp."},{"z":76.2,"area":0.0407,"vol":16615.0,"pct":0.14,"origem":"interp."},{"z":76.3,"area":0.0475,"vol":21627.0,"pct":0.18,"origem":"interp."},{"z":76.4,"area":0.0549,"vol":27703.0,"pct":0.23,"origem":"interp."},{"z":76.5,"area":0.0631,"vol":34715.0,"pct":0.29,"origem":"interp."},{"z":76.6,"area":0.0718,"vol":42534.0,"pct":0.35,"origem":"interp."},{"z":76.7,"area":0.0809,"vol":51030.0,"pct":0.42,"origem":"interp."},{"z":76.8,"area":0.0904,"vol":60076.0,"pct":0.49,"origem":"interp."},{"z":76.9,"area":0.1001,"vol":69542.0,"pct":0.57,"origem":"interp."},{"z":77.0,"area":0.11,"vol":79300.0,"pct":0.65,"origem":"ficha"},{"z":77.1,"area":0.1201,"vol":90037.0,"pct":0.74,"origem":"interp."},{"z":77.2,"area":0.1307,"vol":102467.0,"pct":0.84,"origem":"interp."},{"z":77.3,"area":0.1419,"vol":116500.0,"pct":0.96,"origem":"interp."},{"z":77.4,"area":0.1536,"vol":132045.0,"pct":1.09,"origem":"interp."},{"z":77.5,"area":0.166,"vol":149011.0,"pct":1.22,"origem":"interp."},{"z":77.6,"area":0.1791,"vol":167309.0,"pct":1.37,"origem":"interp."},{"z":77.7,"area":0.193,"vol":186847.0,"pct":1.54,"origem":"interp."},{"z":77.8,"area":0.2078,"vol":207535.0,"pct":1.71,"origem":"interp."},{"z":77.9,"area":0.2234,"vol":229283.0,"pct":1.88,"origem":"interp."},{"z":78.0,"area":0.24,"vol":252000.0,"pct":2.07,"origem":"ficha"},{"z":78.1,"area":0.2582,"vol":276484.0,"pct":2.27,"origem":"interp."},{"z":78.2,"area":0.2786,"vol":303544.0,"pct":2.49,"origem":"interp."},{"z":78.3,"area":0.3008,"vol":333108.0,"pct":2.74,"origem":"interp."},{"z":78.4,"area":0.3246,"vol":365102.0,"pct":3.0,"origem":"interp."},{"z":78.5,"area":0.3499,"vol":399453.0,"pct":3.28,"origem":"interp."},{"z":78.6,"area":0.3764,"vol":436087.0,"pct":3.58,"origem":"interp."},{"z":78.7,"area":0.4039,"vol":474932.0,"pct":3.9,"origem":"interp."},{"z":78.8,"area":0.4321,"vol":515915.0,"pct":4.24,"origem":"interp."},{"z":78.9,"area":0.4609,"vol":558962.0,"pct":4.59,"origem":"interp."},{"z":79.0,"area":0.49,"vol":604000.0,"pct":4.96,"origem":"ficha"},{"z":79.1,"area":0.5199,"vol":652522.0,"pct":5.36,"origem":"interp."},{"z":79.2,"area":0.5513,"vol":705858.0,"pct":5.8,"origem":"interp."},{"z":79.3,"area":0.5839,"vol":763692.0,"pct":6.28,"origem":"interp."},{"z":79.4,"area":0.6178,"vol":825710.0,"pct":6.78,"origem":"interp."},{"z":79.5,"area":0.6527,"vol":891596.0,"pct":7.33,"origem":"interp."},{"z":79.6,"area":0.6887,"vol":961034.0,"pct":7.9,"origem":"interp."},{"z":79.7,"area":0.7255,"vol":1033708.0,"pct":8.49,"origem":"interp."},{"z":79.8,"area":0.763,"vol":1109305.0,"pct":9.12,"origem":"interp."},{"z":79.9,"area":0.8012,"vol":1187507.0,"pct":9.76,"origem":"interp."},{"z":80.0,"area":0.84,"vol":1268000.0,"pct":10.42,"origem":"ficha"},{"z":80.1,"area":0.8795,"vol":1352316.0,"pct":11.11,"origem":"interp."},{"z":80.2,"area":0.9201,"vol":1442030.0,"pct":11.85,"origem":"interp."},{"z":80.3,"area":0.9618,"vol":1536891.0,"pct":12.63,"origem":"interp."},{"z":80.4,"area":1.0045,"vol":1636650.0,"pct":13.45,"origem":"interp."},{"z":80.5,"area":1.0481,"vol":1741054.0,"pct":14.31,"origem":"interp."},{"z":80.6,"area":1.0927,"vol":1849855.0,"pct":15.2,"origem":"interp."},{"z":80.7,"area":1.1382,"vol":1962800.0,"pct":16.13,"origem":"interp."},{"z":80.8,"area":1.1846,"vol":2079640.0,"pct":17.09,"origem":"interp."},{"z":80.9,"area":1.2319,"vol":2200123.0,"pct":18.08,"origem":"interp."},{"z":81.0,"area":1.28,"vol":2324000.0,"pct":19.1,"origem":"ficha"},{"z":81.1,"area":1.3294,"vol":2452738.0,"pct":20.15,"origem":"interp."},{"z":81.2,"area":1.3803,"vol":2587822.0,"pct":21.26,"origem":"interp."},{"z":81.3,"area":1.4327,"vol":2729029.0,"pct":22.42,"origem":"interp."},{"z":81.4,"area":1.4862,"vol":2876135.0,"pct":23.63,"origem":"interp."},{"z":81.5,"area":1.5407,"vol":3028915.0,"pct":24.89,"origem":"interp."},{"z":81.6,"area":1.5959,"vol":3187147.0,"pct":26.19,"origem":"interp."},{"z":81.7,"area":1.6517,"vol":3350605.0,"pct":27.53,"origem":"interp."},{"z":81.8,"area":1.7078,"vol":3519066.0,"pct":28.92,"origem":"interp."},{"z":81.9,"area":1.7639,"vol":3692305.0,"pct":30.34,"origem":"interp."},{"z":82.0,"area":1.82,"vol":3870100.0,"pct":31.8,"origem":"ficha"},{"z":82.1,"area":1.8799,"vol":4055532.0,"pct":33.32,"origem":"interp."},{"z":82.2,"area":1.9462,"vol":4250988.0,"pct":34.93,"origem":"interp."},{"z":82.3,"area":2.0163,"vol":4455205.0,"pct":36.61,"origem":"interp."},{"z":82.4,"area":2.0876,"vol":4666915.0,"pct":38.35,"origem":"interp."},{"z":82.5,"area":2.1577,"vol":4884855.0,"pct":40.14,"origem":"interp."},{"z":82.6,"area":2.2239,"vol":5107758.0,"pct":41.97,"origem":"interp."},{"z":82.7,"area":2.2838,"vol":5334359.0,"pct":43.83,"origem":"interp."},{"z":82.8,"area":2.3348,"vol":5563394.0,"pct":45.71,"origem":"interp."},{"z":82.9,"area":2.3744,"vol":5793596.0,"pct":47.61,"origem":"interp."},{"z":83.0,"area":2.4,"vol":6023700.0,"pct":49.5,"origem":"ficha"},{"z":83.1,"area":2.4148,"vol":6255689.0,"pct":51.4,"origem":"interp."},{"z":83.2,"area":2.4249,"vol":6492160.0,"pct":53.35,"origem":"interp."},{"z":83.3,"area":2.4322,"vol":6732775.0,"pct":55.32,"origem":"interp."},{"z":83.4,"area":2.4388,"vol":6977194.0,"pct":57.33,"origem":"interp."},{"z":83.5,"area":2.4466,"vol":7225076.0,"pct":59.37,"origem":"interp."},{"z":83.6,"area":2.4576,"vol":7476081.0,"pct":61.43,"origem":"interp."},{"z":83.7,"area":2.4738,"vol":7729871.0,"pct":63.52,"origem":"interp."},{"z":83.8,"area":2.5148,"vol":7976813.0,"pct":65.54,"origem":"interp."},{"z":83.9,"area":2.6047,"vol":8220501.0,"pct":67.55,"origem":"interp."},{"z":84.0,"area":2.69,"vol":8522000.0,"pct":70.02,"origem":"ficha"},{"z":84.1,"area":2.7472,"vol":8967580.0,"pct":73.69,"origem":"interp."},{"z":84.2,"area":2.7949,"vol":9560058.0,"pct":78.55,"origem":"interp."},{"z":84.3,"area":2.8386,"vol":10237987.0,"pct":84.12,"origem":"interp."},{"z":84.4,"area":2.8837,"vol":10939918.0,"pct":89.89,"origem":"interp."},{"z":84.5,"area":2.9357,"vol":11604405.0,"pct":95.35,"origem":"interp."},{"z":84.6,"area":3.0,"vol":12170000.0,"pct":100.0,"origem":"ficha"},{"z":84.7,"area":3.0839,"vol":12645435.0,"pct":103.91,"origem":"interp."},{"z":84.8,"area":3.1891,"vol":13084513.0,"pct":107.51,"origem":"interp."},{"z":84.9,"area":3.3128,"vol":13493390.0,"pct":110.87,"origem":"interp."},{"z":85.0,"area":3.4525,"vol":13878225.0,"pct":114.04,"origem":"interp."},{"z":85.1,"area":3.6052,"vol":14245175.0,"pct":117.05,"origem":"interp."},{"z":85.2,"area":3.7684,"vol":14600400.0,"pct":119.97,"origem":"interp."},{"z":85.3,"area":3.9392,"vol":14950056.0,"pct":122.84,"origem":"interp."},{"z":85.4,"area":4.1149,"vol":15300301.0,"pct":125.72,"origem":"interp."},{"z":85.5,"area":4.2929,"vol":15657294.0,"pct":128.65,"origem":"interp."},{"z":85.6,"area":4.4703,"vol":16027193.0,"pct":131.69,"origem":"interp."},{"z":85.7,"area":4.6444,"vol":16416154.0,"pct":134.89,"origem":"interp."},{"z":85.8,"area":4.8126,"vol":16830338.0,"pct":138.29,"origem":"interp."},{"z":85.9,"area":4.972,"vol":17275900.0,"pct":141.95,"origem":"interp."},{"z":86.0,"area":5.12,"vol":17759000.0,"pct":145.92,"origem":"ficha"},{"z":86.1,"area":5.2604,"vol":18283487.0,"pct":150.23,"origem":"interp."},{"z":86.2,"area":5.399,"vol":18846995.0,"pct":154.86,"origem":"interp."},{"z":86.3,"area":5.5358,"vol":19446362.0,"pct":159.79,"origem":"interp."},{"z":86.4,"area":5.6712,"vol":20078422.0,"pct":164.98,"origem":"interp."},{"z":86.5,"area":5.8052,"vol":20740012.0,"pct":170.42,"origem":"interp."},{"z":86.6,"area":5.938,"vol":21427969.0,"pct":176.07,"origem":"interp."},{"z":86.7,"area":6.0696,"vol":22139128.0,"pct":181.92,"origem":"interp."},{"z":86.8,"area":6.2004,"vol":22870325.0,"pct":187.92,"origem":"interp."},{"z":86.9,"area":6.3303,"vol":23618396.0,"pct":194.07,"origem":"interp."},{"z":87.0,"area":6.4596,"vol":24380178.0,"pct":200.33,"origem":"interp."},{"z":87.1,"area":6.5884,"vol":25152506.0,"pct":206.68,"origem":"interp."},{"z":87.2,"area":6.7169,"vol":25932216.0,"pct":213.08,"origem":"interp."},{"z":87.3,"area":6.8452,"vol":26716146.0,"pct":219.52,"origem":"interp."},{"z":87.4,"area":6.9734,"vol":27501130.0,"pct":225.97,"origem":"interp."},{"z":87.5,"area":7.1017,"vol":28284004.0,"pct":232.41,"origem":"interp."},{"z":87.6,"area":7.2303,"vol":29061605.0,"pct":238.8,"origem":"interp."},{"z":87.7,"area":7.3593,"vol":29830770.0,"pct":245.12,"origem":"interp."},{"z":87.8,"area":7.4888,"vol":30588333.0,"pct":251.34,"origem":"interp."},{"z":87.9,"area":7.619,"vol":31331131.0,"pct":257.45,"origem":"interp."},{"z":88.0,"area":7.75,"vol":32056000.0,"pct":263.4,"origem":"ficha"},{"z":88.1,"area":7.9368,"vol":32853999.0,"pct":269.96,"origem":"extrap."},{"z":88.2,"area":8.1266,"vol":33665587.0,"pct":276.63,"origem":"extrap."},{"z":88.3,"area":8.3194,"vol":34490890.0,"pct":283.41,"origem":"extrap."},{"z":88.4,"area":8.5154,"vol":35330034.0,"pct":290.3,"origem":"extrap."},{"z":88.5,"area":8.7145,"vol":36183146.0,"pct":297.31,"origem":"extrap."},{"z":88.6,"area":8.9167,"vol":37050352.0,"pct":304.44,"origem":"extrap."},{"z":88.7,"area":9.122,"vol":37931780.0,"pct":311.68,"origem":"extrap."},{"z":88.8,"area":9.3306,"vol":38827556.0,"pct":319.04,"origem":"extrap."},{"z":88.9,"area":9.5423,"vol":39737808.0,"pct":326.52,"origem":"extrap."},{"z":89.0,"area":9.7573,"vol":40662663.0,"pct":334.12,"origem":"extrap."},{"z":89.1,"area":9.9756,"vol":41602250.0,"pct":341.84,"origem":"extrap."}];
@@ -489,7 +474,7 @@ function update(reRender=true){
   const qEffective=Math.max(0,finalQ-st.withdrawal), meets=qEffective>=st.qMeta-.01;const deficits=siphons.map(s=>({s,...flowBalance(finalQ,s,st)})).filter(x=>x.deficit>0);$('withdrawalWarnings').textContent=deficits.length?'Déficit: '+deficits.map(x=>x.s.name+' '+fmt(x.deficit,2)+' m³/s').join('; '):'';
   $('simResultsTop').innerHTML=`<article class="res"><span>Programa</span><strong>${tl.length} etapas</strong><small>${fmt(totalMin,0)} min = ${fmt(totalMin/60,2)} h</small></article><article class="res"><span>Q necessária em Curral</span><strong>${fmt(st.requiredQ,2)} m³/s</strong><small>meta ${fmt(st.qMeta,2)} + compensação</small></article><article class="res"><span>Q final programada</span><strong>${fmt(finalQ,2)} m³/s</strong><small>Q efetiva após retiradas ≈ ${fmt(qEffective,2)}</small></article><article class="res"><span>Atendimento da meta</span><strong>${meets?'Sim':'Não'}</strong><small><span class="status ${meets?'ok':'warn'}">${meets?'Atende':'Rever programação'}</span></small></article>`;
   $('simResultsBottom').innerHTML=`<article class="res"><span>Velocidade</span><strong>${fmt(v0)} → ${fmt(vf)} m/s</strong><small>inicial → final programada</small></article><article class="res"><span>Pior ΔH screening · ${sref.name}</span><strong>${fmt(worst.deltaH)} mca</strong><small>maior evento da agenda</small></article><article class="res"><span>1ª chegada de onda</span><strong>${fmt(arr[sref.name].wave_h)} h</strong><small>após cada comando, soma-se o instante do evento</small></article><article class="res"><span>Advecção inicial</span><strong>${fmt(arr[sref.name].mass_h)} h</strong><small>referência, não estabilização oficial</small></article>`;
-  if($('arrivalTable')) $('arrivalTable').innerHTML=siphons.map(x=>`<tr><td><b>${x.name}</b></td><td>${fmt(arr[x.name].wave_h,2)} h</td><td>${fmt(arr[x.name].mass_h,2)} h</td><td>${fmt(kinematicHours(x,st.qMeta),2)} h</td></tr>`).join('');
+  $('arrivalTable').innerHTML=siphons.map(x=>`<tr><td><b>${x.name}</b></td><td>${fmt(arr[x.name].wave_h,2)} h</td><td>${fmt(arr[x.name].mass_h,2)} h</td><td>${fmt(kinematicHours(x,st.qMeta),2)} h</td></tr>`).join('');
   const overlap=tl.slice(1).filter((e,i)=>{if(i===0)return false; return e.startMin-tl[i].startMin < arr[sref.name].wave_h*60;}).length;
   $('implications').innerHTML=`<ul class="tight"><li>O sistema parte de <b>${fmt(st.q0,1)} m³/s em regime permanente</b>. O tempo total não é imposto: resulta da soma das durações das ${tl.length} etapas.</li><li>A meta operacional é <b>${fmt(st.qMeta,2)} m³/s</b>. Com retirada de <b>${fmt(st.withdrawal,2)} m³/s</b>, a vazão requerida em Curral Velho é <b>${fmt(st.requiredQ,2)} m³/s</b> quando a compensação está ativa.</li><li>Cada alteração de Q gera uma perturbação com chegada estimada própria. Em ${sref.name}, soma-se aproximadamente <b>${fmt(arr[sref.name].wave_h,2)} h</b> ao horário de cada comando.</li><li>${overlap?`Há <b>${overlap}</b> ocorrência(s) de comandos sucessivos potencialmente sobrepostos antes da propagação da perturbação anterior até ${sref.name}.`:'Não foi identificada sobreposição simples entre comandos consecutivos pelo critério de chegada de onda no sifão selecionado.'}</li><li>O maior ΔH de screening da agenda em ${sref.name} é <b>${fmt(worst.deltaH,2)} mca</b>. Este valor é um indicador relativo baseado na curva HAMMER disponível e <b>não equivale a uma simulação MOC/HAMMER oficial da sequência completa</b>.</li><li>A programação pode terminar acima de 9,5 m³/s; não existe teto lógico no simulador, exceto os limites físicos e operacionais que deverão ser validados em campo/modelo.</li></ul>`;
   drawBarChart(currentScreening()); drawFlowChart(st); drawMatrix(); updateAnimVisual(progress); updateCAV(); updateAllSiphonFlows(); updatePrepModule();
@@ -657,127 +642,155 @@ function applyCAVPreset(){
 }
 
 
-let animReq=null, animRunning=false, animStart=null, progress=0, animDuration=18000;
-const animFronts=[
-  {id:'wave',label:'Onda dinâmica',color:'#1fc8ff',width:13,glow:24,timeFn:(n,st,arr)=>n.name==='Curral Velho'?0:(arr[n.name]?.wave_h||0)},
-  {id:'kin',label:'Cinemática @ Q-meta',color:'#f0c24b',width:10,glow:19,timeFn:(n,st,arr)=>n.name==='Curral Velho'?0:kinematicHours({dist:n.dist},st.qMeta)},
-  {id:'adv',label:'Advecção inicial',color:'#59c985',width:8,glow:15,timeFn:(n,st,arr)=>n.name==='Curral Velho'?0:(arr[n.name]?.mass_h||0)}
-];
+let animReq=null, animRunning=false, animStart=null, progress=0, animDuration=16000;
 function getAnimSpec(){
   const nodes=[
-    {name:'Curral Velho',x:120,y:86,dist:0},
-    {name:'Boa Vista',x:360,y:132,dist:32.93},
-    {name:'Mão Ruiva',x:500,y:158,dist:37.37},
-    {name:'Melancias',x:625,y:181,dist:39.55},
-    {name:'Pirangi',x:865,y:237,dist:68.51},
-    {name:'Serrote',x:1005,y:275,dist:75.58},
-    {name:'Juazeirinho',x:1140,y:313,dist:81.61}
+    {name:'Curral Velho',x:110,y:78,dist:0,kind:'source'},
+    {name:'Boa Vista',x:370,y:118,dist:32.93,kind:'siphon'},
+    {name:'Mão Ruiva',x:520,y:145,dist:37.37,kind:'siphon'},
+    {name:'Melancias',x:650,y:166,dist:39.55,kind:'siphon'},
+    {name:'Pirangi',x:900,y:217,dist:68.51,kind:'siphon'},
+    {name:'Serrote',x:1030,y:252,dist:75.58,kind:'siphon'},
+    {name:'Juazeirinho',x:1145,y:284,dist:81.61,kind:'siphon'}
   ];
-  const d='M 120 86 C 210 91, 300 115, 360 132 S 465 154, 500 158 S 590 177, 625 181 S 790 219, 865 237 S 966 263, 1005 275 S 1098 301, 1140 313';
+  const d='M 110 78 C 210 82, 300 98, 370 118 S 480 139, 520 145 S 620 160, 650 166 S 830 201, 900 217 S 995 243, 1030 252 S 1112 275, 1145 284';
   return {nodes,d};
 }
-function segLabel(a,b){return a&&b?a.name+' → '+b.name:(a?a.name:'Curral Velho');}
-function frontTimeline(kind){
-  const st=getState(),arr=arrivalFor(st.q0),nodes=(window.animNodes||getAnimSpec().nodes),f=animFronts.find(x=>x.id===kind);
-  return nodes.map(n=>({name:n.name,dist:n.dist,t:f.timeFn(n,st,arr)}));
-}
-function distAtTime(tH,tl){
-  if(tH<=0)return {dist:0,segment:segLabel(tl[0],tl[1]),speedKmH:0,speedMS:0};
-  for(let i=1;i<tl.length;i++){
-    const a=tl[i-1],b=tl[i];
-    if(tH<=b.t){
-      const r=Math.max(0,Math.min(1,(tH-a.t)/Math.max(1e-6,b.t-a.t)));
-      const speed=(b.dist-a.dist)/Math.max(1e-6,b.t-a.t);
-      return {dist:a.dist+r*(b.dist-a.dist),segment:segLabel(a,b),speedKmH:speed,speedMS:speed/3.6};
-    }
-  }
-  const b=tl[tl.length-1],a=tl[tl.length-2],speed=(b.dist-a.dist)/Math.max(1e-6,b.t-a.t);
-  return {dist:b.dist,segment:segLabel(a,b),speedKmH:speed,speedMS:speed/3.6};
-}
-function animTotalHours(){return Math.max(...animFronts.map(f=>{const tl=frontTimeline(f.id);return tl[tl.length-1].t;}));}
-function pointAlongDistance(dist){
-  const path=$('animCenter');if(!path)return {x:120,y:86};
-  const total=(window.animNodes||getAnimSpec().nodes).slice(-1)[0].dist;
-  const u=Math.max(0,Math.min(1,dist/Math.max(.001,total)));
-  return path.getPointAtLength((window.animPathLength||path.getTotalLength())*u);
-}
+function segLabel(a,b){ return a && b ? `${a.name} → ${b.name}` : (a ? a.name : 'Curral Velho'); }
 function drawAnimBase(){
-  const svg=$('animSvg'),spec=getAnimSpec(),nodes=spec.nodes;
-  let out=\`
+  const svg=$('animSvg');
+  const spec=getAnimSpec();
+  const nodes=spec.nodes;
+  let out=`
   <defs>
-    <linearGradient id="animSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f9fcff"/><stop offset="100%" stop-color="#e8f1f7"/></linearGradient>
-    <linearGradient id="terrain3d" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e6eef3"/><stop offset="100%" stop-color="#cbdbe5"/></linearGradient>
-    <filter id="animShadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#56788b" flood-opacity=".25"/></filter>
+    <linearGradient id="animSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7fbff"/>
+      <stop offset="100%" stop-color="#eef5fa"/>
+    </linearGradient>
+    <linearGradient id="animProg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1cc7ff"/>
+      <stop offset="100%" stop-color="#005a8d"/>
+    </linearGradient>
+    <linearGradient id="terrainGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dfe8ef" stop-opacity="0.0"/>
+      <stop offset="100%" stop-color="#dfe8ef" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#7ca1b9" flood-opacity="0.22"/>
+    </filter>
   </defs>
-  <rect x="0" y="0" width="1280" height="430" rx="18" fill="url(#animSky)"/>
-  <path d="M 48 104 C 250 142, 470 203, 700 253 S 1010 326, 1225 370 L 1225 408 L 48 408 Z" fill="url(#terrain3d)"/>
-  <path d="M 58 87 L 1215 357" stroke="#a9bfcc" stroke-width="1.5" stroke-dasharray="8 8"/>
-  <text x="1000" y="374" font-size="12" fill="#607685">declividade esquemática</text>
-  <ellipse cx="101" cy="84" rx="62" ry="29" fill="#92e3ff" opacity=".48"/>
-  <text x="38" y="44" font-size="14" font-weight="900" fill="#0a2340">Açude Curral Velho</text>
-  <text x="38" y="62" font-size="11" fill="#607685">origem comum das três frentes</text>
-  <path d="\${spec.d}" fill="none" stroke="#91a9b7" stroke-width="42" stroke-linecap="round" transform="translate(0 13)" opacity=".62"/>
-  <path d="\${spec.d}" fill="none" stroke="#c6deea" stroke-width="40" stroke-linecap="round" filter="url(#animShadow)"/>
-  <path d="\${spec.d}" fill="none" stroke="#82cee9" stroke-width="25" stroke-linecap="round"/>
-  <path id="animCenter" d="\${spec.d}" fill="none" stroke="#0b5d87" stroke-width="2" stroke-dasharray="10 10" opacity=".38"/>
-  \`;
-  animFronts.slice().reverse().forEach(f=>{
-    out+=\`<path id="animGlow_\${f.id}" d="\${spec.d}" fill="none" stroke="\${f.color}" stroke-width="\${f.glow}" stroke-linecap="round" opacity=".14"/>\`;
-    out+=\`<path id="animProg_\${f.id}" d="\${spec.d}" fill="none" stroke="\${f.color}" stroke-width="\${f.width}" stroke-linecap="round" opacity=".96"/>\`;
-  });
+  <rect x="0" y="0" width="1280" height="360" fill="url(#animSky)" rx="18"/>
+  <path d="M 55 66 L 1210 315" stroke="#9fb7c8" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.7"/>
+  <text x="934" y="325" font-size="12" fill="#607685">declividade esquemática do sistema</text>
+  <path d="M 65 92 C 260 123, 420 164, 560 190 S 860 252, 1010 287 S 1150 314, 1235 330 L 1235 348 L 65 348 Z" fill="url(#terrainGrad)"/>
+  <ellipse cx="98" cy="76" rx="54" ry="26" fill="#8edfff" opacity="0.45"/>
+  <text x="47" y="42" font-size="13" font-weight="800" fill="#0a2340">Açude Curral Velho</text>
+  <text x="40" y="58" font-size="11" fill="#607685">origem da onda hidráulica</text>
+  <path d="${spec.d}" fill="none" stroke="#bfd8e6" stroke-width="28" stroke-linecap="round" filter="url(#softShadow)"/>
+  <path d="${spec.d}" fill="none" stroke="#7fd0ef" stroke-width="18" stroke-linecap="round"/>
+  <path id="animCenter" d="${spec.d}" fill="none" stroke="#0b5d87" stroke-width="2.3" stroke-linecap="round" stroke-dasharray="10 10" opacity="0.60"/>
+  <path id="animProgressGlow" d="${spec.d}" fill="none" stroke="#1cc7ff" stroke-width="28" stroke-linecap="round" opacity="0.18"/>
+  <path id="animProgress" d="${spec.d}" fill="none" stroke="url(#animProg)" stroke-width="18" stroke-linecap="round"/>
+  `;
   for(let i=0;i<nodes.length-1;i++){
-    const a=nodes[i],b=nodes[i+1],mx=(a.x+b.x)/2,my=(a.y+b.y)/2+34;
-    out+=\`<text x="\${mx}" y="\${my}" text-anchor="middle" font-size="11" font-weight="800" fill="#4f6978">\${fmt(b.dist-a.dist,2)} km</text>\`;
+    const a=nodes[i],b=nodes[i+1],mx=(a.x+b.x)/2,my=(a.y+b.y)/2+28;
+    out += `<text x="${mx}" y="${my}" text-anchor="middle" font-size="11" font-weight="700" fill="#4d6778">${fmt(b.dist-a.dist,2)} km</text>`;
   }
   nodes.forEach((n,i)=>{
-    out+=\`<circle id="node\${i}" cx="\${n.x}" cy="\${n.y}" r="\${i?12:15}" fill="\${i?'#de6b4f':'#1aa0e8'}" stroke="#fff" stroke-width="3"/>\`;
-    out+=\`<text x="\${n.x+14}" y="\${n.y-16}" font-size="15" font-weight="900" fill="#0a2340" stroke="#fff" stroke-width="4" paint-order="stroke">\${n.name}</text>\`;
-    out+=\`<rect x="\${n.x-30}" y="\${n.y+12}" width="60" height="18" rx="9" fill="#fff" opacity=".94" stroke="#d5e2ea"/><text x="\${n.x}" y="\${n.y+25}" text-anchor="middle" font-size="10" font-weight="800" fill="#4c6677">\${fmt(n.dist,2)} km</text>\`;
+    const fill=i===0?'#1aa0e8':'#de6b4f';
+    const r=i===0?15:12;
+    out += `<circle id="node${i}" cx="${n.x}" cy="${n.y}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="3"/>`;
+    out += `<text x="${n.x+14}" y="${n.y-14}" font-size="15" font-weight="800" fill="#0a2340" stroke="#fff" stroke-width="4" paint-order="stroke">${n.name}</text>`;
+    out += `<rect x="${n.x-28}" y="${n.y+10}" width="56" height="18" rx="9" fill="#ffffff" opacity="0.92" stroke="#d5e2ea"/>`;
+    out += `<text x="${n.x}" y="${n.y+23}" text-anchor="middle" font-size="10" font-weight="800" fill="#4c6677">${fmt(n.dist,2)} km</text>`;
   });
-  out+=\`
-  <g transform="translate(805 18)">
-    <rect width="447" height="145" rx="14" fill="#fff" opacity=".97" stroke="#d6e2ea"/>
-    <text x="16" y="23" font-size="13" font-weight="900" fill="#0a2340">Propagação da primeira perturbação</text>
-    <text id="animHudTime" x="16" y="44" font-size="12" fill="#355263">Tempo representado: 0,00 h</text>
-    <text id="animHudWave" x="16" y="70" font-size="12" font-weight="800" fill="#0aaee8">Onda dinâmica</text>
-    <text id="animHudKin" x="16" y="96" font-size="12" font-weight="800" fill="#b78810">Cinemática @ Q-meta</text>
-    <text id="animHudAdv" x="16" y="122" font-size="12" font-weight="800" fill="#318c58">Advecção inicial</text>
-    <text id="animHudTrecho" x="16" y="140" font-size="11" fill="#607685">Frente líder: Curral Velho → Boa Vista</text>
-  </g>
-  \`;
-  animFronts.forEach((f,i)=>{
-    out+=\`<circle id="pulse_\${f.id}" cx="120" cy="86" r="\${12-i*2}" fill="\${f.color}" stroke="#fff" stroke-width="2.5"/>\`;
+  out += `
+    <circle id="trail3" cx="110" cy="78" r="6" fill="#71d8ff" opacity="0.35"/>
+    <circle id="trail2" cx="110" cy="78" r="8" fill="#55ceff" opacity="0.5"/>
+    <circle id="trail1" cx="110" cy="78" r="10" fill="#2fc4ff" opacity="0.7"/>
+    <circle id="pulse" cx="110" cy="78" r="14" fill="#0aa9ff" opacity="0.98" stroke="#fff" stroke-width="3"/>
+    <g id="pulseBadge" transform="translate(122 46)">
+      <rect x="0" y="0" width="86" height="24" rx="12" fill="#0a2340" opacity="0.92"/>
+      <text id="pulseBadgeText" x="43" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#fff">0,00 km</text>
+    </g>
+    <g id="animHud" transform="translate(880 18)">
+      <rect x="0" y="0" width="370" height="108" rx="14" fill="#ffffff" opacity="0.95" stroke="#d6e2ea"/>
+      <text x="16" y="22" font-size="13" font-weight="900" fill="#0a2340">Painel dinâmico da frente hidráulica</text>
+      <text id="animHudTrecho" x="16" y="44" font-size="12" fill="#355263">Trecho atual: Curral Velho → Boa Vista</text>
+      <text id="animHudDist" x="16" y="64" font-size="12" fill="#355263">Distância percorrida: 0,00 km</text>
+      <text id="animHudVel" x="16" y="84" font-size="12" fill="#355263">Velocidade média local da frente: 0,00 km/h</text>
+      <text id="animHudTime" x="16" y="104" font-size="12" fill="#355263">Tempo hidráulico representado: 0,00 h</text>
+    </g>
+  `;
+  svg.innerHTML=out;
+  window.animSpec=spec;
+  window.animNodes=nodes;
+  const basePath=$('animCenter');
+  const len=basePath.getTotalLength();
+  window.animPathLength=len;
+  ['animProgress','animProgressGlow'].forEach(id=>{
+    const el=$(id); if(!el) return;
+    el.style.strokeDasharray=`${len} ${len}`;
+    el.style.strokeDashoffset=`${len}`;
   });
-  svg.innerHTML=out;window.animNodes=nodes;
-  const p=$('animCenter'),len=p.getTotalLength();window.animPathLength=len;
-  animFronts.forEach(f=>['animProg_','animGlow_'].forEach(pre=>{const x=$(pre+f.id);x.style.strokeDasharray=\`\${len} \${len}\`;x.style.strokeDashoffset=\`\${len}\`;}));
   updateAnimVisual(0);
 }
-function updateAnimText(st,data){
+function pointAlong(u){
+  const path=$('animCenter');
+  if(!path) return {x:110,y:78};
+  const len=(window.animPathLength||path.getTotalLength())*Math.max(0,Math.min(1,u));
+  return path.getPointAtLength(len);
+}
+function animTimeline(){
+  const st=getState(),arr=arrivalFor(st.q0),nodes=(window.animNodes||getAnimSpec().nodes);
+  return nodes.map((n,i)=>({name:n.name,dist:n.dist,t:i===0?0:(arr[n.name]?.wave_h||0)}));
+}
+function currentAnimMetrics(u){
+  const nodes=(window.animNodes||getAnimSpec().nodes), timeline=animTimeline();
+  const totalDist=nodes[nodes.length-1].dist, dist=Math.max(0,Math.min(totalDist,u*totalDist));
+  let idx=0; while(idx<nodes.length-1 && dist>nodes[idx+1].dist) idx++;
+  const a=nodes[idx], b=nodes[Math.min(nodes.length-1, idx+1)];
+  const ta=timeline[idx].t, tb=timeline[Math.min(timeline.length-1, idx+1)].t;
+  const spanDist=Math.max(0.001,b.dist-a.dist), frac=b===a?0:(dist-a.dist)/spanDist;
+  const timeH=ta+(tb-ta)*Math.max(0,Math.min(1,frac));
+  const speedKmH=spanDist/Math.max(0.001,tb-ta);
+  const speedMS=speedKmH/3.6;
+  return {dist,timeH,speedKmH,speedMS,segment:segLabel(a,b),a,b,totalDist};
+}
+function updateAnimText(st,metrics){
   const tl=stageTimeline(),qFinal=tl.length?tl[tl.length-1].q:st.q0;
-  $('animText').textContent=\`Programa: \${tl.length} etapa(s), \${fmt(st.q0,1)} → \${fmt(qFinal,2)} m³/s. Azul chega primeiro, amarelo depois e verde por último; as posições são calculadas pelos tempos de cada referência hidráulica.\`;
+  if(!metrics){
+    $('animText').textContent=`Esquema com declividade: a frente azul mostra a propagação da onda operacional ao longo do canal e dos sifões. A figura informa trecho atual, distância percorrida, velocidade média local da frente e tempo hidráulico representado.`;
+    return;
+  }
+  $('animText').textContent=`Programa atual: ${tl.length} etapa(s), ${fmt(st.q0,1)} → ${fmt(qFinal,2)} m³/s. Frente no trecho ${metrics.segment}; distância percorrida ${fmt(metrics.dist,2)} km; velocidade média local da frente ≈ ${fmt(metrics.speedKmH,2)} km/h (${fmt(metrics.speedMS,2)} m/s); tempo hidráulico representado ${fmt(metrics.timeH,2)} h.`;
 }
 function updateAnimVisual(u){
-  const st=getState(),totalH=animTotalHours(),tH=u*totalH,totalDist=(window.animNodes||getAnimSpec().nodes).slice(-1)[0].dist;
-  const ms=animFronts.map(f=>{const m=distAtTime(tH,frontTimeline(f.id));return {...m,id:f.id,label:f.label,udist:Math.max(0,Math.min(1,m.dist/totalDist))};});
-  ms.forEach(m=>{
-    const p=pointAlongDistance(m.dist),line=$('animProg_'+m.id),glow=$('animGlow_'+m.id),pulse=$('pulse_'+m.id),len=window.animPathLength||1;
-    line.style.strokeDashoffset=\`\${len*(1-m.udist)}\`;glow.style.strokeDashoffset=\`\${len*(1-m.udist)}\`;
-    pulse.setAttribute('cx',p.x);pulse.setAttribute('cy',p.y);
-  });
-  const leader=ms.slice().sort((a,b)=>b.dist-a.dist)[0];
-  $('animHudTime').textContent=\`Tempo representado: \${fmt(tH,2)} h / \${fmt(totalH,2)} h\`;
-  $('animHudWave').textContent=\`Onda dinâmica: \${fmt(ms[0].dist,2)} km · \${fmt(ms[0].speedKmH,2)} km/h (\${fmt(ms[0].speedMS,2)} m/s)\`;
-  $('animHudKin').textContent=\`Cinemática @ Q-meta: \${fmt(ms[1].dist,2)} km · \${fmt(ms[1].speedKmH,2)} km/h (\${fmt(ms[1].speedMS,2)} m/s)\`;
-  $('animHudAdv').textContent=\`Advecção inicial: \${fmt(ms[2].dist,2)} km · \${fmt(ms[2].speedKmH,2)} km/h (\${fmt(ms[2].speedMS,2)} m/s)\`;
-  $('animHudTrecho').textContent=\`Frente líder: \${leader.segment}\`;
-  (window.animNodes||[]).forEach((n,i)=>{const el=$('node'+i),reached=leader.dist>=n.dist-1e-6;el.setAttribute('fill',i===0?'#1aa0e8':(reached?'#0aa9ff':'#de6b4f'));});
-  updateAnimText(st,ms);
+  const st=getState(),m=currentAnimMetrics(u),p=pointAlong(u),len=window.animPathLength||1;
+  ['animProgress','animProgressGlow'].forEach(id=>{ const el=$(id); if(el) el.style.strokeDashoffset=`${Math.max(0,len*(1-u))}`; });
+  [['trail3',0.085],['trail2',0.055],['trail1',0.03]].forEach(([id,lag])=>{ const pt=pointAlong(Math.max(0,u-lag)); const el=$(id); if(el){ el.setAttribute('cx',pt.x); el.setAttribute('cy',pt.y);} });
+  const pulse=$('pulse'); if(pulse){ pulse.setAttribute('cx', p.x); pulse.setAttribute('cy', p.y); }
+  const badge=$('pulseBadge');
+  if(badge){ badge.setAttribute('transform',`translate(${Math.min(1180,Math.max(20,p.x+12))} ${Math.max(18,p.y-34)})`); }
+  if($('pulseBadgeText')) $('pulseBadgeText').textContent=`${fmt(m.dist,2)} km`;
+  if($('animHudTrecho')) $('animHudTrecho').textContent=`Trecho atual: ${m.segment}`;
+  if($('animHudDist')) $('animHudDist').textContent=`Distância percorrida: ${fmt(m.dist,2)} km de ${fmt(m.totalDist,2)} km`;
+  if($('animHudVel')) $('animHudVel').textContent=`Velocidade média local da frente: ${fmt(m.speedKmH,2)} km/h (${fmt(m.speedMS,2)} m/s)`;
+  if($('animHudTime')) $('animHudTime').textContent=`Tempo hidráulico representado: ${fmt(m.timeH,2)} h`;
+  (window.animNodes||[]).forEach((n,i)=>{ const node=$('node'+i); if(!node) return; const reached=m.dist>=n.dist-1e-6; node.setAttribute('fill', i===0 ? '#1aa0e8' : (reached ? '#0aa9ff' : '#de6b4f')); node.setAttribute('r', reached ? (i===0?16:13) : (i===0?15:12)); });
+  updateAnimText(st,m);
 }
-function stepAnim(ts){if(!animRunning)return;if(animStart===null)animStart=ts-progress*animDuration;progress=Math.max(0,Math.min(1,(ts-animStart)/animDuration));updateAnimVisual(progress);if(progress<1)animReq=requestAnimationFrame(stepAnim);else{animRunning=false;animStart=null;}}
-function playAnim(){if(animRunning)return;animRunning=true;animReq=requestAnimationFrame(stepAnim);}
-function pauseAnim(){animRunning=false;if(animReq)cancelAnimationFrame(animReq);animReq=null;}
-function resetAnim(){pauseAnim();progress=0;animStart=null;updateAnimVisual(0);}
+function stepAnim(ts){
+  if(!animRunning) return;
+  if(animStart===null) animStart=ts-progress*animDuration;
+  const elapsed=ts-animStart;
+  progress=Math.max(0,Math.min(1,elapsed/animDuration));
+  updateAnimVisual(progress);
+  if(progress<1) animReq=requestAnimationFrame(stepAnim); else { animRunning=false; animStart=null; }
+}
+function playAnim(){ if(animRunning) return; animRunning=true; animReq=requestAnimationFrame(stepAnim); }
+function pauseAnim(){ animRunning=false; if(animReq) cancelAnimationFrame(animReq); animReq=null; }
+function resetAnim(){ pauseAnim(); progress=0; animStart=null; updateAnimVisual(0); }
 
 function updatePrepModule(){
   const st=getState(),hold=Math.max(1,parseFloat($('prepHold')?.value||10)),withdrawal=Math.max(0,parseFloat($('prepWithdrawal')?.value||st.withdrawal)),seq=['Juazeirinho','Serrote','Pirangi','Melancias','Mão Ruiva','Boa Vista'],prepMinutes=seq.length*hold,tl=stageTimeline(),finalQ=tl.length?tl[tl.length-1].q:st.q0;
